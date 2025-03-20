@@ -6,6 +6,7 @@ import { getUser } from '@/lib/db/queries';
 import Script from 'next/script';
 
 import ThemeProvider from '@/components/theme-provider';
+import { Toaster } from '@/components/ui/sonner';
 
 import content from '../content.json';
 
@@ -54,6 +55,7 @@ export default function RootLayout({
         >
           <UserProvider userPromise={userPromise}>{children}</UserProvider>
         </ThemeProvider>
+        <Toaster />
       </body>
     </html>
   );

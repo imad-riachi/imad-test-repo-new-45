@@ -1,16 +1,25 @@
-export default function DashboardPage() {
+import React from 'react';
+import { ResumeMatcher } from '@/components/resume-match/ResumeMatcher';
+
+export const metadata = {
+  title: 'Resume Match - AI-Powered Resume Adaptation',
+  description: 'Adapt your resume to job specifications with AI assistance',
+};
+
+export default function ResumePage() {
   return (
-    <div className='mx-auto max-w-7xl px-4 sm:px-6 lg:px-8'>
-      <div className='space-y-12'>
-        {/* Welcome Section */}
-        <div className='max-w-3xl space-y-4'>
-          <h1 className='text-4xl font-bold tracking-tight sm:text-5xl'>
-            Welcome to Your SAAS Dashboard
+    <div className='min-h-screen bg-gradient-to-b from-blue-50 to-white py-10 dark:from-gray-900 dark:to-gray-950'>
+      <div className='container mx-auto'>
+        <header className='mb-8 text-center'>
+          <h1 className='bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-4xl font-bold text-transparent'>
+            Resume Match
           </h1>
-          <p className='text-muted-foreground text-lg'>
-            Get started with building your SAAS application.
+          <p className='text-muted-foreground mt-2 text-lg'>
+            Tailor your resume to match job specifications with AI
           </p>
-        </div>
+        </header>
+
+        <ResumeMatcher />
       </div>
     </div>
   );

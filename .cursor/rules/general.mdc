@@ -3,52 +3,193 @@ description:
 globs: 
 alwaysApply: true
 ---
-You are an expert in Web Development using the Honu SAAS starter boilerplate stack: JavaScript, Node.js, React, Next.js App Router, Tailwind CSS, Postgresql with drizzle ORM.
+# Honu SAAS Starter Development Guidelines
 
-Code Style and Structure
+## Folder
+Build the application in the 'Dashboard' Folder.
 
-Write concise, technical JavaScript code with accurate examples.
-Use functional and declarative programming patterns; avoid classes.
-Prefer iteration and modularization over code duplication.
-Use descriptive variable names with auxiliary verbs (e.g., isLoading, hasError).
-Structure files: exported component, subcomponents, helpers, static content.
+## Stack
+- JavaScript/TypeScript
+- Node.js
+- React
+- Next.js App Router
+- Tailwind CSS
+- PostgreSQL with Drizzle ORM
+- Package manager: pnpm (not npm)
 
-Naming Conventions
+## Code Style
 
-Use kebab-case for directories.
-Use camelCase for variables and functions.
-Use PascalCase for components.
-File names for components should be in PascalCase. Rest of the files in kebab-case.
-Prefix component names with their type (e.g. ButtonAccount.tsx and ButtonSignin.tsx, CardAnalyticsMain.tsx and CardAnalyticsData.tsx, etc.)
+```typescript
+// ✅ Good: Functional approach
+const calculateTotal = (items) => items.reduce((sum, item) => sum + item.price, 0);
 
-Syntax and Formatting
+// ❌ Avoid: Class-based approach
+class Calculator {
+  calculateTotal(items) {
+    return items.reduce((sum, item) => sum + item.price, 0);
+  }
+}
+```
 
-Use const for defining functions.
-Avoid unnecessary curly braces in conditionals; use concise syntax for simple statements.
-Use declarative JSX. Always provide TypeScript Types. 
+## File Structure
+Components folder structure:
+```
+components/
+  ui/                    # shadcn components
+  feature-name/          # kebab-case folder
+    ButtonFeature.tsx    # PascalCase component
+    ButtonFeature.stories.tsx
+    index.tsx            # exports
+```
 
-UI and Styling
+## Naming Patterns
 
-Use Shadcn/UI and Tailwind CSS for components and styling.
-Implement responsive design with Tailwind CSS; use a mobile-first approach.
+- 📁 Directories: `kebab-case` (e.g., `user-profile`)
+- 🔤 Variables/Functions: `camelCase` (e.g., `getUserData`)
+- 🧩 Components: `PascalCase` (e.g., `UserProfile`)
+- 📄 Component files: `PascalCase.tsx` (e.g., `UserProfile.tsx`)
+- 📄 Other files: `kebab-case.ts` (e.g., `api-utils.ts`)
+- 🧩 Component prefixing: `TypeName` (e.g., `ButtonAccount`, `CardAnalyticsMain`)
 
-Performance Optimization
+## TypeScript Types
 
-Minimize 'use client', 'useState', and 'useEffect'; favor React Server Components (RSC).
-Wrap client components in Suspense with fallback.
-Use dynamic loading for non-critical components.
-Optimize images: use WebP format, include size data, implement lazy loading.
+```typescript
+// Always define prop types
+type ButtonProps = {
+  variant: 'primary' | 'secondary';
+  onClick: () => void;
+  children: React.ReactNode;
+  isDisabled?: boolean;
+};
 
-Key Conventions
+const Button: React.FC<ButtonProps> = ({ 
+  variant, 
+  onClick, 
+  children,
+  isDisabled = false
+}) => {
+  // implementation
+};
+```
 
-Optimize Web Vitals (LCP, CLS, FID).
-Limit 'use client':
-Favor server components and Next.js SSR.
-Use only for Web API access in small components.
-Avoid for data fetching or state management.
-When using client-side hooks (useState and useEffect) in a component that's being treated as a Server Component by Next.js, always add the "use client" directive at the top of the file.
-Follow Next.js docs for Data Fetching, Rendering, and Routing.
+## Component Structure
 
-Design:
-For all designs I ask you to make, have them be beautiful, not cookie cutter. Make webpages that are fully featured and worthy for production.
-Do not install other packages for UI themes, icons, etc unless absolutely necessary or I request them.
+```typescript
+// index.tsx
+export { default, type CardProps } from './Card';
+
+// Card.tsx
+'use client'; // Only when necessary!
+
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+
+export type CardProps = {
+  title: string;
+  description: string;
+};
+
+const Card: React.FC<CardProps> = ({ title, description }) => {
+  return (
+    <div className="rounded-lg p-4 shadow-md">
+      <h3 className="text-lg font-medium">{title}</h3>
+      <p className="mt-2 text-gray-600">{description}</p>
+    </div>
+  );
+};
+
+export default Card;
+```
+
+## Server vs Client Components
+
+```typescript
+// ✅ Server Component (default)
+const ProductList = async () => {
+  const products = await fetchProducts();
+  
+  return (
+    <div>
+      {products.map(product => (
+        <ProductCard key={product.id} product={product} />
+      ))}
+    </div>
+  );
+};
+
+// ⚠️ Client Component (only when needed)
+'use client';
+
+import { useState } from 'react';
+
+const SearchBar = () => {
+  const [query, setQuery] = useState('');
+  
+  return (
+    <input 
+      type="text" 
+      value={query} 
+      onChange={(e) => setQuery(e.target.value)} 
+    />
+  );
+};
+```
+
+## Data Fetching
+
+```typescript
+// ✅ Server component data fetching
+const Dashboard = async () => {
+  const data = await fetch('https://api.example.com/data', { next: { revalidate: 60 } })
+    .then(res => res.json());
+  
+  return <DashboardUI data={data} />;
+};
+```
+
+## Package Management
+```bash
+# ✅ Use pnpm for all package operations
+pnpm install shadcn-ui
+pnpm add -D @types/react
+
+# ❌ Avoid npm commands
+# npm install (don't use)
+```
+## Opening a new terminal
+Always run on opening of the terminal: 
+```bash
+nvm use --lts
+```
+
+## Component Testing
+
+```tsx
+// ComponentName.stories.tsx
+import { Meta, StoryObj } from '@storybook/react';
+import Button from './Button';
+
+const meta: Meta<typeof Button> = {
+  title: 'Components/Button',
+  component: Button,
+  tags: ['autodocs'],
+};
+
+export default meta;
+type Story = StoryObj<typeof Button>;
+
+export const Primary: Story = {
+  args: {
+    variant: 'primary',
+    children: 'Click Me',
+  },
+};
+```
+
+## Key Performance Rules
+
+1. Minimize `'use client'` directives
+2. Use React Server Components by default
+3. Implement code splitting with `dynamic` imports
+4. Optimize images with `next/image`
+5. Use Suspense boundaries for loading states
