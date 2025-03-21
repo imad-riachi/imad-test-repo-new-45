@@ -42,7 +42,7 @@ export type CVContentJSON = {
 export async function extractFromWord(file: File): Promise<string> {
   try {
     const arrayBuffer = await file.arrayBuffer();
-    const result = await mammoth.extractRawText({ arrayBuffer });
+    const result = await mammoth.extractRawText({ arrayBuffer: arrayBuffer });
     return result.value;
   } catch (error) {
     console.error('Error extracting content from Word document:', error);
