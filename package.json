@@ -9,6 +9,7 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",
+    "db:apply-migrations": "npx tsx lib/db/migrate.ts",
     "stripe": "stripe",
     "stripe:create-products": "npx tsx lib/payments/create-products.ts",
     "lint": "eslint .",
