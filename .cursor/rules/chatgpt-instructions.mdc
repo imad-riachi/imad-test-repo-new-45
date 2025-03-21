@@ -1,0 +1,73 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+You are a experineced Senior Developer who is now put on charge of building a new product. You need to come up with a detailed plan for building the software by breaking it in to a small tasks (ideally up to one story point). Make sure when breaking down the tasks to also split the work in to thin slices that will fit in to a sprint. We would like to be able to do an end to end demo after each sprint. Be explicit about where each sprint start and ends. We want the project to be done ideally in 4 sprints. There are certain technical requirments you will have to take in to account listed below. Also make sure to review the product instructions and ask any questions that could help you better define the project before starting listing the tasks. 
+
+# Techincal Requirements
+Technical requirments you need to take in to account when you create the istructions for the project:
+
+
+- We are working within an existing ongoing, production ready enviornemnt. You should not encourage changing any of the existing setup could lead to the whole system being brought down and some serious loses. To avoid that whe are introducing new pages and functionality only in the folder `app/(dashboard)/dashboard`. Components are put in the `components` folder and api routes are under `app/api`
+- The project is a full stack Next Js 15 project that uses the following tech stack:
+```
+* JavaScript/TypeScript
+* Node.js
+* React
+* Next.js App Router
+* Tailwind CSS
+* PostgreSQL with Drizzle ORM
+* Package manager: pnpm (not npm)
+```
+All of the packges listed above are up to their latest versions if for whatever reason we experinece an issue with any of those packages you should be very explicit to mention to the developer that is doing the work to not try to downgrade the packages. There is no option to change the existing packages, doing so could affect the production system and bring everything down.
+- The project already have authentication so we do not need to introduce that. Make sure to exclude new authentication as part of the tasks.
+- We need to make sure that all code is thuroughly tested, when describing the tasks we need to make sure there is a passing test for each new React component, new function or api endpoint.
+- We are using Storybook to develop components in isolation. We need to insist on fully specced and functional storybook story for each new component we introduce
+- The project has a defined styling that complies with the company brand so when we are introducing new components or pages we need to make sure they comply it that visuals. Make sure to only use the colors defined in global.css, if developers are doing any styling they need to make sure to consult the existing stylesheet.
+
+# Product definition
+
+We want to build the following product: a CV rewriting service. The idea is that a user will upload their CV we will then extract the data from the CV and store it in a JSON format. Once we do that we will then have a place for the user to put a job description. When they provide a job description they will be able to request their CV to be rewritten to best fir the job spec. The way we envision this to happen is to pass the JSON CV data we have stored with the job description to an LLM and ask the LLM to rewrite the CV. Once that is donw we will display the new CV to the user. The user then will be able to download their new CV in markdown or Pdf format.
+
+
+---CHATGPT QUESTIONS---
+
+Before I start breaking down the tasks into small, sprint-ready story points, I’d like to clarify a few points about the project to ensure the plan aligns perfectly with your vision and the technical constraints:
+
+1. **CV Upload & Data Extraction:**  
+   - What file types should be supported for CV uploads (e.g., PDF, DOCX, plain text)?: ANSWER : We want to support word and google doc files.
+   - Do we have an existing extraction tool or API for converting the CV content into JSON, or should this functionality be built from scratch?: ANSWER :  No we do no have that
+   - Are there any specific data fields that need to be extracted (e.g., personal details, work history, education)?: ANSWER : We want all files to be extracted
+
+2. **LLM Integration for CV Rewriting:**  
+   - Which LLM or API will we be integrating with for the rewriting functionality?: ANSWER : Latest version of Claude
+   - Are there specific prompts or rewriting guidelines that need to be enforced when communicating with the LLM?: ANSWER : Not sure about this use your expertise as senior developer to decide that  
+   - Is there any error handling or fallback strategy required if the LLM call fails?: ANSWER : No we just want to follow the latest best practices here.
+
+3. **User Interface and Flow:**  
+   - How is user authentication handled? Is it already part of the production environment, or do we need to introduce a new flow?: ANSWER : New FLOW  
+   - Should the user be able to preview the rewritten CV before downloading, and do we need an “edit” or “approve” step in the UI?: ANSWER : They should be able to review the CV but we don't need them to edit it for now
+   - For the download options (Markdown and PDF), do we have any preferred libraries or design guidelines for the PDF conversion?: No we don't know again use best practices and industry standard open source libraries
+
+4. **Styling & Branding:**  
+   - Are there any components or pages that require extra branding consideration beyond using the colors and styles defined in `global.css`?: ANSWER : No make sure to stick to the branding 
+   - Should we consult with a design team for any specific UI/UX components, or is the current design language sufficient?: ANSWER : We do not have a design team. As a Senior software engineer you should know what are the best practices here so just follow those.
+
+5. **Testing & Storybook:**  
+   - Are there any specific testing frameworks or coverage requirements (e.g., unit tests, integration tests) we must adhere to? : ANSWER : We are using vitest as well as the play functionality in Storybook. 
+   - Do we have an existing Storybook setup that we can extend, or do we need to configure it further for these new components?: ANSWER : We have storybook configured you do not need to set it up from scratch.
+
+6. **Deployment & Integration Concerns:**  
+   - Since we’re working within an existing production environment, is there a staging environment available for integration testing of these new features?: ANSWER : We are currently working with only two env local and production
+   - Are there any deployment constraints or rollback plans in case of issues with the new pages under `app/(dashboard)/dashboard`?: ANSWER : No we have none of those
+
+Once I have these clarifications, I can provide a detailed breakdown of tasks split into four sprints, ensuring each sprint delivers an end-to-end demo without impacting the production environment.
+
+
+Go trough each task in the instructions.md file. After you complete each task check it off and make sure to run a successful build, if that goes well make a commit. Go trough all tasks in a sprint make sure to ask the user to review the changes and ask them if they are happy with the functionality. Our goal is to have a fully functioning demo at the end of each sprint. After the user is happy with the result of a sprint proceed to the next one.
+
+
+
+
+
