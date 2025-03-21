@@ -4,6 +4,7 @@ import { Manrope } from 'next/font/google';
 import { UserProvider } from '@/lib/auth';
 import { getUser } from '@/lib/db/queries';
 import Script from 'next/script';
+import { Toaster } from 'sonner';
 
 import ThemeProvider from '@/components/theme-provider';
 
@@ -52,7 +53,10 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <UserProvider userPromise={userPromise}>{children}</UserProvider>
+          <UserProvider userPromise={userPromise}>
+            {children}
+            <Toaster position='bottom-right' />
+          </UserProvider>
         </ThemeProvider>
       </body>
     </html>
