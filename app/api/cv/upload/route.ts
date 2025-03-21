@@ -15,6 +15,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    console.log('User authenticated:', user.id);
+
     // Handle file upload
     const formData = await req.formData();
     const file = formData.get('file') as File;
@@ -23,8 +25,17 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
     }
 
+    console.log('File received:', file.name, file.type, file.size);
+
     // Process the CV file
     const cvDataResult = await processCVFile(file, user.id.toString());
+
+    console.log('CV processed, extracted data:', {
+      fileName: cvDataResult.fileName,
+      fileSize: cvDataResult.fileSize,
+      contentLength: cvDataResult.content.length,
+      jsonKeys: Object.keys(cvDataResult.jsonContent),
+    });
 
     // Save to database
     const result = await db
@@ -38,6 +49,8 @@ export async function POST(req: NextRequest) {
         jsonContent: cvDataResult.jsonContent,
       })
       .returning();
+
+    console.log('CV saved to database with ID:', result[0].id);
 
     return NextResponse.json({
       message: 'CV uploaded and processed successfully',
