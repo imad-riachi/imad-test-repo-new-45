@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { UploadCloud, X, FileText, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -16,9 +16,14 @@ const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 export type CVUploadProps = {
   onFileAccepted: (file: File) => void;
   className?: string;
+  initialFile?: File | null;
 };
 
-export function CVUpload({ onFileAccepted, className }: CVUploadProps) {
+export function CVUpload({
+  onFileAccepted,
+  className,
+  initialFile,
+}: CVUploadProps) {
   const [file, setFile] = useState<File | null>(null);
   const [dragActive, setDragActive] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -88,6 +93,15 @@ export function CVUpload({ onFileAccepted, className }: CVUploadProps) {
       fileInputRef.current.value = '';
     }
   };
+
+  useEffect(() => {
+    if (initialFile) {
+      if (validateFile(initialFile)) {
+        setFile(initialFile);
+        onFileAccepted(initialFile);
+      }
+    }
+  }, [initialFile, onFileAccepted]);
 
   return (
     <div className={cn('w-full', className)}>
