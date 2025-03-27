@@ -1,3 +1,2 @@
-import PricingCard from './PricingCard';
-
-export default PricingCard;
+export { default } from './PricingCard';
+export type { PricingCardProps } from './PricingCard';

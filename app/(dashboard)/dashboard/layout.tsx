@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import DashboardNav from '@/components/dashboard-nav';
-import { MobileToggle } from '@/components/dashboard-nav/mobile-toggle';
+import MobileToggle from '@/components/mobile-toggle';
 
 export const metadata: Metadata = {
   title: 'CV Rewriter Dashboard',

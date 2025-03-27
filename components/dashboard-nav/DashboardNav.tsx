@@ -28,11 +28,11 @@ const navItems: NavItem[] = [
   },
 ];
 
-interface DashboardNavProps {
+export interface DashboardNavProps {
   className?: string;
 }
 
-export function DashboardNav({ className }: DashboardNavProps) {
+const DashboardNav: React.FC<DashboardNavProps> = ({ className }) => {
   const pathname = usePathname();
 
   return (
@@ -58,6 +58,6 @@ export function DashboardNav({ className }: DashboardNavProps) {
       ))}
     </nav>
   );
-}
+};
 
 export default DashboardNav;

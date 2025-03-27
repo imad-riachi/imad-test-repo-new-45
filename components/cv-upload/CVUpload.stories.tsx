@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { fn, expect } from '@storybook/test';
 import { userEvent, within } from '@storybook/test';
-import { CVUpload } from './index';
+import CVUpload from './index';
 
 const meta: Meta<typeof CVUpload> = {
   title: 'Components/CVUpload',

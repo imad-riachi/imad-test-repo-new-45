@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { DashboardNav } from './index';
+import DashboardNav from './DashboardNav';
 
 const meta: Meta<typeof DashboardNav> = {
   title: 'Components/DashboardNav',

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { CVUpload } from '@/components/cv-upload';
+import CVUpload from '@/components/cv-upload';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 

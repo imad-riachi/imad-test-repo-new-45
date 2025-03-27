@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { MobileToggle } from './mobile-toggle';
+import MobileToggle from './MobileToggle';
 
 const meta: Meta<typeof MobileToggle> = {
   title: 'Components/MobileToggle',

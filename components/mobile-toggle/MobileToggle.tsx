@@ -7,9 +7,11 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import DashboardNav from '.';
+import DashboardNav from '@/components/dashboard-nav';
 
-export function MobileToggle() {
+export type MobileToggleProps = {};
+
+const MobileToggle: React.FC<MobileToggleProps> = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -25,4 +27,6 @@ export function MobileToggle() {
       </DropdownMenuContent>
     </DropdownMenu>
   );
-}
+};
+
+export default MobileToggle;

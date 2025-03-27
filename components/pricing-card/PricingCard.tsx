@@ -10,7 +10,7 @@ import { checkoutAction } from '@/lib/payments/actions';
 
 import clsx from 'clsx';
 
-interface PricingCardProps {
+export interface PricingCardProps {
   name: string;
   price: number;
   interval: string;

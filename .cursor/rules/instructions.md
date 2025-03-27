@@ -11,26 +11,26 @@ Create a new dashboard landing page under `app/(dashboard)/dashboard` that serve
 
 **Acceptance Criteria:**
 
-- [ ] A new page is created at `app/(dashboard)/dashboard/index.tsx` that loads without errors.
-- [ ] The page displays a basic layout (header, footer, content area) consistent with the company branding.
-- [ ] Page renders correctly on multiple screen sizes.
-- [ ] Vitest tests are written to verify that the page renders without error.
-- [ ] A Storybook story is available to simulate the dashboard page.
+- [x] A new page is created at `app/(dashboard)/dashboard/index.tsx` that loads without errors.
+- [x] The page displays a basic layout (header, footer, content area) consistent with the company branding.
+- [x] Page renders correctly on multiple screen sizes.
+- [x] Vitest tests are written to verify that the page renders without error.
+- [x] A Storybook story is available to simulate the dashboard page.
 
 ---
 
 ### **Ticket 1.2 – Implement Dashboard Navigation Menu**
 
 **Description:**  
-Develop a responsive navigation menu within the dashboard that links to “Upload CV”, “Job Description”, and “Review & Download” sections. Ensure that the navigation menu adheres to the styling rules defined in `global.css` and uses Tailwind CSS.
+Develop a responsive navigation menu within the dashboard that links to "Upload CV", "Job Description", and "Review & Download" sections. Ensure that the navigation menu adheres to the styling rules defined in `global.css` and uses Tailwind CSS.
 
 **Acceptance Criteria:**
 
-- [ ] Navigation menu component is created in the `components/` folder (e.g., `DashboardNav.tsx`).
-- [ ] The navigation includes clearly labeled links to “Upload CV”, “Job Description”, and “Review & Download” sections.
-- [ ] Active, hover, and default states of menu items conform to the design guidelines.
-- [ ] Vitest tests are written to verify navigation link functionality.
-- [ ] A Storybook story is created showcasing the navigation in different states.
+- [x] Navigation menu component is created in the `components/` folder (e.g., `DashboardNav.tsx`).
+- [x] The navigation includes clearly labeled links to "Upload CV", "Job Description", and "Review & Download" sections.
+- [x] Active, hover, and default states of menu items conform to the design guidelines.
+- [x] Vitest tests are written to verify navigation link functionality.
+- [x] A Storybook story is created showcasing the navigation in different states.
 
 ---
 
@@ -41,11 +41,11 @@ Develop or update layout components to ensure a consistent design across all new
 
 **Acceptance Criteria:**
 
-- [ ] Layout components are created/updated to be reusable across the dashboard.
-- [ ] All new pages (Dashboard, CV Upload, Job Description, CV Review) use these layout components.
-- [ ] Manual tests confirm the layout renders correctly on various devices.
-- [ ] Unit tests verify that layout components render without errors.
-- [ ] Storybook stories document and demonstrate layout usage.
+- [x] Layout components are created/updated to be reusable across the dashboard.
+- [x] All new pages (Dashboard, CV Upload, Job Description, CV Review) use these layout components.
+- [x] Manual tests confirm the layout renders correctly on various devices.
+- [x] Unit tests verify that layout components render without errors.
+- [x] Storybook stories document and demonstrate layout usage.
 
 ---
 
@@ -58,11 +58,11 @@ Create a file upload component (`CVUpload.tsx`) that allows users to upload thei
 
 **Acceptance Criteria:**
 
-- [ ] A React component is created that only accepts valid Word and Google Doc file types.
-- [ ] Client-side validation prevents unsupported file types from being submitted.
-- [ ] The component displays clear error messages on invalid file upload attempts.
-- [ ] Vitest tests cover file type validation and error display.
-- [ ] A Storybook story is available to demonstrate the upload component with interactive play functions.
+- [x] A React component is created that only accepts valid Word and Google Doc file types.
+- [x] Client-side validation prevents unsupported file types from being submitted.
+- [x] The component displays clear error messages on invalid file upload attempts.
+- [x] Vitest tests cover file type validation and error display.
+- [x] A Storybook story is available to demonstrate the upload component with interactive play functions.
 
 ---
 
@@ -73,11 +73,11 @@ Develop a module that extracts all content from the uploaded CV files (Word and 
 
 **Acceptance Criteria:**
 
-- [ ] A dedicated extraction module is created (e.g., `cvExtractor.ts`).
-- [ ] The module can process both Word and Google Doc file formats.
-- [ ] The output is a complete JSON representation of the CV’s content.
-- [ ] Unit tests cover multiple file types and edge cases.
-- [ ] Code reviews confirm that no package downgrades are introduced.
+- [x] A dedicated extraction module is created (e.g., `cvExtractor.ts`).
+- [x] The module can process both Word and Google Doc file formats.
+- [x] The output is a complete JSON representation of the CV's content.
+- [x] Unit tests cover multiple file types and edge cases.
+- [x] Code reviews confirm that no package downgrades are introduced.
 
 ---
 
@@ -177,12 +177,12 @@ Connect the job description UI component with the LLM API endpoint. Ensure that 
 ### **Ticket 4.1 – Create Rewritten CV Display Component**
 
 **Description:**  
-Develop a UI component (`CVDisplay.tsx`) that displays the rewritten CV in a clear and branded format. The component should be easy to read and align with the company’s styling guidelines.
+Develop a UI component (`CVDisplay.tsx`) that displays the rewritten CV in a clear and branded format. The component should be easy to read and align with the company's styling guidelines.
 
 **Acceptance Criteria:**
 
 - [ ] A display component is created that renders the rewritten CV.
-- [ ] The component’s design follows the styling defined in `global.css` and Tailwind CSS.
+- [ ] The component's design follows the styling defined in `global.css` and Tailwind CSS.
 - [ ] Vitest tests ensure the component renders correctly with various CV data.
 - [ ] A Storybook story is created to showcase the component with sample data.
 

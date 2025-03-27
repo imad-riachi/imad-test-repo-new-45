@@ -325,3 +325,17 @@ This project uses the latest verion of Tailwind. This version does not require a
 ## Npm Packages
 YOU ARE NOT ALLOWED to uninstall or change in anyway already present npm packages. You are allowed to install new packages if they are not already in the packges.json but if a packages is already presented you cant alter it since this could lead to system breaking bugs.
 
+## Database Management
+We are using drizzle ORM in this project. When dealing with the database follow the following rules:
+
+- Database related code should be put in `lib/db`
+- New migrations should be added to `lib\db\migrations`
+- New queries should be added to `lib\db\queries.ts`
+- Database schema is managed inside `lib\db\schema.ts`
+- You can use the provided script to run migrations:
+```bash
+pnpm run db:migrate
+```
+- DO NOT add additional Node scripts or ever change the existing ones for data base management. We have all the db scripts setup and running in production. Adding new ones or altering the existing ones can lead to total system breakdown and huge losses.
+- Make sure to do a commit every time you are updating the DB so we can revert the changes if something goes wrong.
+

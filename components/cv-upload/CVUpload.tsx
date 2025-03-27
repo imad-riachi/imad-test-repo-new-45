@@ -19,11 +19,11 @@ export type CVUploadProps = {
   initialFile?: File | null;
 };
 
-export function CVUpload({
+const CVUpload: React.FC<CVUploadProps> = ({
   onFileAccepted,
   className,
   initialFile,
-}: CVUploadProps) {
+}) => {
   const [file, setFile] = useState<File | null>(null);
   const [dragActive, setDragActive] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -189,4 +189,6 @@ export function CVUpload({
       )}
     </div>
   );
-}
+};
+
+export default CVUpload;
