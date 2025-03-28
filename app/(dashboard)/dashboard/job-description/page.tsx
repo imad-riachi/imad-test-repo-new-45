@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { toast } from 'sonner';
 import JobDescriptionInput from '@/components/job-description';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
@@ -25,6 +26,7 @@ export default function JobDescriptionPage() {
         }
       } catch (error) {
         console.error('Failed to fetch job description:', error);
+        toast.error('Failed to load job description. Please try again.');
       } finally {
         setIsLoading(false);
       }
@@ -58,7 +60,7 @@ export default function JobDescriptionPage() {
       router.push('/dashboard/review');
     } catch (error) {
       console.error('Failed to process job description:', error);
-      alert(
+      toast.error(
         error instanceof Error
           ? error.message
           : 'Failed to process job description. Please ensure you have uploaded your CV first.',
