@@ -1,30 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { db } from '@/lib/db/drizzle';
 import { cvData } from '@/lib/db/schema';
 import { processCVFile } from '@/lib/cv/extractor';
 import { getUser } from '@/lib/db/queries';
-
-// Define error types for better error handling
-enum ErrorType {
-  UNAUTHORIZED = 'UNAUTHORIZED',
-  BAD_REQUEST = 'BAD_REQUEST',
-  PROCESSING_ERROR = 'PROCESSING_ERROR',
-  DATABASE_ERROR = 'DATABASE_ERROR',
-  UNKNOWN_ERROR = 'UNKNOWN_ERROR',
-}
-
-// Custom error class for API errors
-class APIError extends Error {
-  type: ErrorType;
-  statusCode: number;
-
-  constructor(message: string, type: ErrorType, statusCode: number) {
-    super(message);
-    this.type = type;
-    this.statusCode = statusCode;
-    this.name = 'APIError';
-  }
-}
+import { APIError, ErrorType, createErrorResponse } from '@/lib/api/errors';
 
 export async function POST(req: NextRequest) {
   try {
@@ -92,7 +71,7 @@ export async function POST(req: NextRequest) {
 
         console.log('CV saved to database with ID:', result[0].id);
 
-        return NextResponse.json({
+        return Response.json({
           message: 'CV uploaded and processed successfully',
           cvId: result[0].id,
         });
@@ -113,26 +92,6 @@ export async function POST(req: NextRequest) {
       );
     }
   } catch (error) {
-    console.error('Error in CV upload API:', error);
-
-    // Handle APIError with type and status code
-    if (error instanceof APIError) {
-      return NextResponse.json(
-        {
-          error: error.message,
-          type: error.type,
-        },
-        { status: error.statusCode },
-      );
-    }
-
-    // Handle unexpected errors
-    return NextResponse.json(
-      {
-        error: 'Failed to process CV',
-        type: ErrorType.UNKNOWN_ERROR,
-      },
-      { status: 500 },
-    );
+    return createErrorResponse(error);
   }
 }

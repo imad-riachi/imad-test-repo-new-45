@@ -1,9 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { POST } from '../route';
 import { processCVFile } from '@/lib/cv/extractor';
 import { db } from '@/lib/db/drizzle';
 import { getUser } from '@/lib/db/queries';
+import { APIError, ErrorType } from '@/lib/api/errors';
 
 // Mock dependencies
 vi.mock('@/lib/db/drizzle', () => ({

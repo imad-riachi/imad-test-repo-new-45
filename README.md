@@ -27,6 +27,7 @@ This is a starter template for building a SaaS application using **Next.js** wit
   - [Run The App Locally](#run-the-app-locally)
   - [Accessing pgAdmin](#accessing-pgadmin)
   - [Database Connection Details](#database-connection-details)
+  - [Database Schema Documentation](#database-schema-documentation)
   - [Cleaning Up](#cleaning-up)
 - [Testing Payments](#testing-payments)
 - [Going to Production](#going-to-production)
@@ -409,6 +410,8 @@ Note: When connecting from pgAdmin (which runs in Docker), use:
 
 - Host: `postgres` (Docker service name)
 - Port: `5432` (internal container port)
+
+For detailed information about the database schema, including tables, relationships, and the CV data model, see the [Database Schema Documentation](lib/db/README.md).
 
 ### Cleaning Up
 

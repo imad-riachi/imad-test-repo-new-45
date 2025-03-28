@@ -1,15 +1,16 @@
-import { NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { getUserLatestCV } from '@/lib/db/queries';
+import { APIError, ErrorType, createErrorResponse } from '@/lib/api/errors';
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
     const latestCV = await getUserLatestCV();
 
     if (!latestCV) {
-      return NextResponse.json({ cv: null }, { status: 200 });
+      return Response.json({ cv: null }, { status: 200 });
     }
 
-    return NextResponse.json({
+    return Response.json({
       cv: {
         id: latestCV.id,
         fileName: latestCV.fileName,
@@ -19,7 +20,6 @@ export async function GET() {
       },
     });
   } catch (error) {
-    console.error('Error fetching latest CV:', error);
-    return NextResponse.json({ error: 'Failed to fetch CV' }, { status: 500 });
+    return createErrorResponse(error);
   }
 }

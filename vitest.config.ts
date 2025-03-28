@@ -38,7 +38,6 @@ export default defineConfig({
         test: {
           name: 'database',
           include: ['lib/**/__tests__/*.test.ts'],
-          setupFiles: ['./lib/vitest.setup.ts'], // Database setup (if needed)
         },
       },
       {

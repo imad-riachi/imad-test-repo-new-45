@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { POST } from '../route';
 import { handleSubscriptionChange } from '@/lib/payments/stripe';
 import { NextRequest } from 'next/server';
+import { APIError, ErrorType } from '@/lib/api/errors';
 
 // Mock the stripe module
 vi.mock('@/lib/payments/stripe', () => ({
@@ -11,6 +12,41 @@ vi.mock('@/lib/payments/stripe', () => ({
     },
   },
   handleSubscriptionChange: vi.fn(),
+}));
+
+// Mock the API errors module
+vi.mock('@/lib/api/errors', () => ({
+  APIError: vi.fn().mockImplementation((message, type, statusCode) => ({
+    message,
+    type,
+    statusCode,
+    name: 'APIError',
+  })),
+  ErrorType: {
+    UNAUTHORIZED: 'UNAUTHORIZED',
+    BAD_REQUEST: 'BAD_REQUEST',
+    PROCESSING_ERROR: 'PROCESSING_ERROR',
+    DATABASE_ERROR: 'DATABASE_ERROR',
+    UNKNOWN_ERROR: 'UNKNOWN_ERROR',
+  },
+  createErrorResponse: vi.fn((error) => {
+    if (error.type) {
+      return Response.json(
+        {
+          error: error.message,
+          type: error.type,
+        },
+        { status: error.statusCode },
+      );
+    }
+    return Response.json(
+      {
+        error: 'An unexpected error occurred',
+        type: 'UNKNOWN_ERROR',
+      },
+      { status: 500 },
+    );
+  }),
 }));
 
 describe('Stripe Webhook Route', () => {
@@ -135,7 +171,29 @@ describe('Stripe Webhook Route', () => {
 
     expect(response.status).toBe(400);
     expect(data).toEqual({
-      error: 'Webhook signature verification failed.',
+      error: 'Webhook signature verification failed',
+      type: 'BAD_REQUEST',
+    });
+    expect(handleSubscriptionChange).not.toHaveBeenCalled();
+  });
+
+  it('should return 400 if stripe-signature header is missing', async () => {
+    const request = new NextRequest(
+      'http://localhost:3000/api/stripe/webhook',
+      {
+        method: 'POST',
+        body: mockPayload,
+        // No stripe-signature header
+      },
+    );
+
+    const response = await POST(request);
+    const data = await response.json();
+
+    expect(response.status).toBe(400);
+    expect(data).toEqual({
+      error: 'Stripe signature missing from headers',
+      type: 'BAD_REQUEST',
     });
     expect(handleSubscriptionChange).not.toHaveBeenCalled();
   });

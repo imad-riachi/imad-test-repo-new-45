@@ -103,11 +103,11 @@ Define the database schema (or extend existing models) for storing the extracted
 
 **Acceptance Criteria:**
 
-- [ ] A new database table or model for CV data is defined.
-- [ ] Migration scripts (if applicable) are created and documented.
-- [ ] Drizzle ORM models are implemented correctly.
-- [ ] Integration tests verify that data can be inserted and retrieved without issues.
-- [ ] Documentation is updated with the schema design.
+- [x] A new database table or model for CV data is defined.
+- [x] Migration scripts (if applicable) are created and documented.
+- [x] Drizzle ORM models are implemented correctly.
+- [x] Integration tests verify that data can be inserted and retrieved without issues.
+- [x] Documentation is updated with the schema design.
 
 ---
 

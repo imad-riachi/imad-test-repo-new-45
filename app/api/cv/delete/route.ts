@@ -1,17 +1,19 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { db } from '@/lib/db/drizzle';
 import { cvData } from '@/lib/db/schema';
 import { eq, and } from 'drizzle-orm';
 import { getUser } from '@/lib/db/queries';
+import { APIError, ErrorType, createErrorResponse } from '@/lib/api/errors';
 
 export async function DELETE(req: NextRequest) {
   try {
     // Check authentication
     const user = await getUser();
     if (!user) {
-      return NextResponse.json(
-        { error: 'You must be logged in to delete a CV' },
-        { status: 401 },
+      throw new APIError(
+        'You must be logged in to delete a CV',
+        ErrorType.UNAUTHORIZED,
+        401,
       );
     }
 
@@ -20,7 +22,7 @@ export async function DELETE(req: NextRequest) {
     const cvId = searchParams.get('id');
 
     if (!cvId) {
-      return NextResponse.json({ error: 'CV ID is required' }, { status: 400 });
+      throw new APIError('CV ID is required', ErrorType.BAD_REQUEST, 400);
     }
 
     // Delete the CV record
@@ -30,17 +32,17 @@ export async function DELETE(req: NextRequest) {
       .returning();
 
     if (result.length === 0) {
-      return NextResponse.json(
-        { error: 'CV not found or you do not have permission to delete it' },
-        { status: 404 },
+      throw new APIError(
+        'CV not found or you do not have permission to delete it',
+        ErrorType.BAD_REQUEST,
+        404,
       );
     }
 
-    return NextResponse.json({
+    return Response.json({
       message: 'CV deleted successfully',
     });
   } catch (error) {
-    console.error('Error deleting CV:', error);
-    return NextResponse.json({ error: 'Failed to delete CV' }, { status: 500 });
+    return createErrorResponse(error);
   }
 }
