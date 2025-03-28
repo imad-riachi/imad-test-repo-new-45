@@ -1,6 +1,6 @@
 import { desc, and, eq, isNull } from 'drizzle-orm';
 import { db } from './drizzle';
-import { activityLogs, teamMembers, teams, users } from './schema';
+import { activityLogs, teamMembers, teams, users, cvData } from './schema';
 import { cookies } from 'next/headers';
 import { verifyToken } from '@/lib/auth/session';
 
@@ -126,4 +126,19 @@ export async function getTeamForUser(userId: number) {
   });
 
   return result?.teamMembers[0]?.team || null;
+}
+
+export async function getUserLatestCV() {
+  const user = await getUser();
+  if (!user) {
+    return null;
+  }
+
+  const result = await db.query.cvData.findMany({
+    where: eq(cvData.userId, user.id),
+    orderBy: [desc(cvData.createdAt)],
+    limit: 1,
+  });
+
+  return result.length > 0 ? result[0] : null;
 }

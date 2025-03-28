@@ -88,11 +88,11 @@ Develop an API endpoint under `app/api/cv` that accepts the uploaded file, proce
 
 **Acceptance Criteria:**
 
-- [ ] API endpoint (e.g., `app/api/cv/upload.ts`) is implemented.
-- [ ] The endpoint accepts file uploads and passes them to the extraction module.
-- [ ] The extracted JSON is successfully stored in the database.
-- [ ] Integration tests validate the complete upload-to-storage flow.
-- [ ] Appropriate error handling is implemented and tested.
+- [x] API endpoint (e.g., `app/api/cv/upload.ts`) is implemented.
+- [x] The endpoint accepts file uploads and passes them to the extraction module.
+- [x] The extracted JSON is successfully stored in the database.
+- [x] Integration tests validate the complete upload-to-storage flow.
+- [x] Appropriate error handling is implemented and tested.
 
 ---
 
