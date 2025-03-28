@@ -1,6 +1,13 @@
 import { desc, and, eq, isNull } from 'drizzle-orm';
 import { db } from './drizzle';
-import { activityLogs, teamMembers, teams, users, cvData } from './schema';
+import {
+  activityLogs,
+  teamMembers,
+  teams,
+  users,
+  cvData,
+  jobDescriptions,
+} from './schema';
 import { cookies } from 'next/headers';
 import { verifyToken } from '@/lib/auth/session';
 
@@ -141,4 +148,80 @@ export async function getUserLatestCV() {
   });
 
   return result.length > 0 ? result[0] : null;
+}
+
+// Get the user's active job description
+export async function getUserActiveJobDescription() {
+  const user = await getUser();
+  if (!user) {
+    return null;
+  }
+
+  const result = await db.query.jobDescriptions.findMany({
+    where: and(
+      eq(jobDescriptions.userId, user.id),
+      eq(jobDescriptions.isActive, true),
+    ),
+    orderBy: [desc(jobDescriptions.createdAt)],
+    limit: 1,
+  });
+
+  return result.length > 0 ? result[0] : null;
+}
+
+// Save a new job description
+export async function saveJobDescription(content: string) {
+  const user = await getUser();
+  if (!user) {
+    throw new Error('User not authenticated');
+  }
+
+  // Get the latest CV for the user
+  const latestCV = await getUserLatestCV();
+  if (!latestCV) {
+    throw new Error('No CV found - please upload your CV first');
+  }
+
+  // First, deactivate any existing active job descriptions
+  await db
+    .update(jobDescriptions)
+    .set({
+      isActive: false,
+      updatedAt: new Date(),
+    })
+    .where(
+      and(
+        eq(jobDescriptions.userId, user.id),
+        eq(jobDescriptions.isActive, true),
+      ),
+    );
+
+  // Then, create a new active job description
+  const result = await db
+    .insert(jobDescriptions)
+    .values({
+      userId: user.id,
+      cvId: latestCV.id,
+      content,
+      isActive: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    })
+    .returning();
+
+  return result[0];
+}
+
+// Delete a job description
+export async function deleteJobDescription(id: number) {
+  const user = await getUser();
+  if (!user) {
+    throw new Error('User not authenticated');
+  }
+
+  await db
+    .delete(jobDescriptions)
+    .where(
+      and(eq(jobDescriptions.id, id), eq(jobDescriptions.userId, user.id)),
+    );
 }

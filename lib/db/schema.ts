@@ -6,6 +6,7 @@ import {
   timestamp,
   integer,
   jsonb,
+  boolean,
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
@@ -83,6 +84,20 @@ export const cvData = pgTable('cv_data', {
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
 });
 
+export const jobDescriptions = pgTable('job_descriptions', {
+  id: serial('id').primaryKey(),
+  userId: integer('user_id')
+    .notNull()
+    .references(() => users.id),
+  cvId: integer('cv_id')
+    .notNull()
+    .references(() => cvData.id),
+  content: text('content').notNull(),
+  isActive: boolean('is_active').notNull().default(true),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+});
+
 export const teamsRelations = relations(teams, ({ many }) => ({
   teamMembers: many(teamMembers),
   activityLogs: many(activityLogs),
@@ -93,6 +108,7 @@ export const usersRelations = relations(users, ({ many }) => ({
   teamMembers: many(teamMembers),
   invitationsSent: many(invitations),
   cvData: many(cvData),
+  jobDescriptions: many(jobDescriptions),
 }));
 
 export const invitationsRelations = relations(invitations, ({ one }) => ({
@@ -135,6 +151,20 @@ export const cvDataRelations = relations(cvData, ({ one }) => ({
   }),
 }));
 
+export const jobDescriptionsRelations = relations(
+  jobDescriptions,
+  ({ one }) => ({
+    user: one(users, {
+      fields: [jobDescriptions.userId],
+      references: [users.id],
+    }),
+    cv: one(cvData, {
+      fields: [jobDescriptions.cvId],
+      references: [cvData.id],
+    }),
+  }),
+);
+
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
 export type Team = typeof teams.$inferSelect;
@@ -152,6 +182,8 @@ export type TeamDataWithMembers = Team & {
 };
 export type CVData = typeof cvData.$inferSelect;
 export type NewCVData = typeof cvData.$inferInsert;
+export type JobDescription = typeof jobDescriptions.$inferSelect;
+export type NewJobDescription = typeof jobDescriptions.$inferInsert;
 
 export enum ActivityType {
   SIGN_UP = 'SIGN_UP',

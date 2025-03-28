@@ -120,10 +120,10 @@ Build a UI component (`JobDescriptionInput.tsx`) that allows users to enter a jo
 
 **Acceptance Criteria:**
 
-- [ ] A React component is created to capture the job description input.
-- [ ] Input validation is implemented to ensure appropriate job description length and format.
-- [ ] Vitest tests verify that the input component functions as expected.
-- [ ] A Storybook story is created to demonstrate the job description input with interactive play functions.
+- [x] A React component is created to capture the job description input.
+- [x] Input validation is implemented to ensure appropriate job description length and format.
+- [x] Vitest tests verify that the input component functions as expected.
+- [x] A Storybook story is created to demonstrate the job description input with interactive play functions.
 
 ---
 
@@ -134,11 +134,11 @@ Develop a service module that integrates with the latest version of Claude. This
 
 **Acceptance Criteria:**
 
-- [ ] A service module (e.g., `llmService.ts`) is created to communicate with Claude.
-- [ ] The module builds a prompt that includes the CV JSON and job description.
-- [ ] Error handling is implemented according to current best practices.
-- [ ] Unit tests using mocks simulate Claude API responses.
-- [ ] Code reviews ensure no package version conflicts are introduced.
+- [x] A service module (e.g., `llmService.ts`) is created to communicate with Claude.
+- [x] The module builds a prompt that includes the CV JSON and job description.
+- [x] Error handling is implemented according to current best practices.
+- [x] Unit tests using mocks simulate Claude API responses.
+- [x] Code reviews ensure no package version conflicts are introduced.
 
 ---
 
@@ -149,11 +149,11 @@ Create an API endpoint under `app/api/llm` that accepts the job description and 
 
 **Acceptance Criteria:**
 
-- [ ] An API endpoint (e.g., `app/api/llm/rewrite.ts`) is implemented.
-- [ ] The endpoint correctly forwards requests to the Claude API using the service module.
-- [ ] The rewritten CV is returned as a response.
-- [ ] Integration tests validate the full flow from job description input to rewritten CV retrieval.
-- [ ] Proper error handling is confirmed through testing.
+- [x] An API endpoint (e.g., `app/api/llm/rewrite.ts`) is implemented.
+- [x] The endpoint correctly forwards requests to the Claude API using the service module.
+- [x] The rewritten CV is returned as a response.
+- [x] Integration tests validate the full flow from job description input to rewritten CV retrieval.
+- [x] Proper error handling is confirmed through testing.
 
 ---
 
@@ -164,11 +164,11 @@ Connect the job description UI component with the LLM API endpoint. Ensure that 
 
 **Acceptance Criteria:**
 
-- [ ] The job description input triggers an API call to the new endpoint.
-- [ ] A loading spinner or similar indicator is displayed during the API call.
-- [ ] The rewritten CV is rendered in the UI upon a successful API response.
-- [ ] End-to-end tests simulate the complete user flow and verify correct state transitions.
-- [ ] Error messages are displayed appropriately if the API call fails.
+- [x] The job description input triggers an API call to the new endpoint.
+- [x] A loading spinner or similar indicator is displayed during the API call.
+- [x] The rewritten CV is rendered in the UI upon a successful API response.
+- [x] End-to-end tests simulate the complete user flow and verify correct state transitions.
+- [x] Error messages are displayed appropriately if the API call fails.
 
 ---
 

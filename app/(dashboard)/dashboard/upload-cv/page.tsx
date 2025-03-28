@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 import CVUpload from '@/components/cv-upload';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
-import { Loader2, Trash2 } from 'lucide-react';
+import { Loader2, Trash2, ArrowLeft, ArrowRight } from 'lucide-react';
 
 type CVFile = {
   id: number;
@@ -130,13 +130,39 @@ export default function UploadCVPage() {
     }
   };
 
+  const goBack = () => {
+    router.push('/dashboard');
+  };
+
+  const goNext = () => {
+    if (existingCV) {
+      router.push('/dashboard/job-description');
+    }
+  };
+
   return (
     <div className='space-y-6'>
-      <div>
-        <h1 className='text-3xl font-bold tracking-tight'>Upload CV</h1>
-        <p className='text-muted-foreground mt-2'>
-          Upload your CV in Word or Google Doc format.
-        </p>
+      <div className='flex items-center justify-between'>
+        <div>
+          <h1 className='text-3xl font-bold tracking-tight'>Upload CV</h1>
+          <p className='text-muted-foreground mt-2'>
+            Upload your CV in Word or Google Doc format.
+          </p>
+        </div>
+        {!isLoading && (
+          <div className='flex gap-2'>
+            <Button variant='outline' onClick={goBack} className='gap-2'>
+              <ArrowLeft className='h-4 w-4' />
+              Back
+            </Button>
+            {existingCV && (
+              <Button variant='outline' onClick={goNext} className='gap-2'>
+                Next
+                <ArrowRight className='h-4 w-4' />
+              </Button>
+            )}
+          </div>
+        )}
       </div>
 
       <div className='space-y-6 rounded-lg border p-8'>
