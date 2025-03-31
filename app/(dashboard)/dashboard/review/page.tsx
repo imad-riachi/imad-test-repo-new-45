@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import CVDisplay from '@/components/cv-display';
+import CVDownload from '@/components/cv-download';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Download } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 export default function ReviewPage() {
@@ -83,6 +84,10 @@ export default function ReviewPage() {
           error={error}
           className='min-h-[400px]'
         />
+
+        {rewrittenCV && !isLoading && !error && (
+          <CVDownload cvContent={rewrittenCV} className='mt-6' />
+        )}
       </div>
     </div>
   );
