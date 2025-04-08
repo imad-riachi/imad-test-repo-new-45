@@ -218,67 +218,18 @@ nvm use
 pnpm install
 ```
 
-## Component Testing
-  We are using storybook play functionality to test components. Each components story should include such tests. Here is an example how we write those tests.
+## ▶️ Running Tests
 
-```tsx
-import type { Meta, StoryObj } from '@storybook/react';
-
-import { userEvent, within } from '@storybook/test';
-
-import { RegistrationForm } from './RegistrationForm';
-
-const meta: Meta<typeof RegistrationForm> = {
-  component: RegistrationForm,
-};
-
-export default meta;
-type Story = StoryObj<typeof RegistrationForm>;
-
-/*
- * See https://storybook.js.org/docs/writing-stories/play-function#working-with-the-canvas
- * to learn more about using the canvasElement to query the DOM
- */
-export const FilledForm: Story = {
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    const emailInput = canvas.getByLabelText('email', {
-      selector: 'input',
-    });
-
-    await userEvent.type(emailInput, 'example-email@email.com', {
-      delay: 100,
-    });
-
-    const passwordInput = canvas.getByLabelText('password', {
-      selector: 'input',
-    });
-
-    await userEvent.type(passwordInput, 'ExamplePassword', {
-      delay: 100,
-    });
-    // See https://storybook.js.org/docs/essentials/actions#automatically-matching-args to learn how to setup logging in the Actions panel
-    const submitButton = canvas.getByRole('button');
-
-    await userEvent.click(submitButton);
-  },
-};
-   ```
-
-## Unit tests
-Make sure to write unit tests where that is applicable. DO NOT WRITE unit tests for components thoshe should be tested in Storybooks. DO NOT USE Jest for testing, our project uses vitest for unit testing. When test fail report the failure and stop code execution until further notice. DO NOT TRY to fix tests by using Jest this will break all our tests running in production CI pipelines.
-
-## Running Unit tests
-
-Sine our unit tests are dependending on storybook make sure that storybook is up before running them 
+Unit tests depend on **Storybook being available** in the background (without manually launching the Storybook UI). Follow these steps carefully:
 
 ```bash
-nvm use #(make sure we are using the correct node version)
+# Ensure you're using the correct Node version
+nvm use
 
-# ❌ Avoid 
-# pnpm run storybook #(do not start storyboook)
+# 🚫 DO NOT start Storybook manually with this:
+# pnpm run storybook
 
+# ✅ Instead, run all tests using Vitest
 pnpm run test
 ```
 

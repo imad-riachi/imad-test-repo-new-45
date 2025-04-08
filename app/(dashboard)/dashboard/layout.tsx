@@ -1,8 +1,8 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Dashboard',
-  description: 'Welcome to your SAAS dashboard',
+  title: 'CV Rewriting Service',
+  description: 'Optimize your CV for job applications',
 };
 
 export default function DashboardLayout({
@@ -12,9 +12,7 @@ export default function DashboardLayout({
 }) {
   return (
     <div className='flex min-h-screen flex-col'>
-      <main className='flex-1'>
-        <div className='container py-6'>{children}</div>
-      </main>
+      <main className='flex-1'>{children}</main>
     </div>
   );
 }
