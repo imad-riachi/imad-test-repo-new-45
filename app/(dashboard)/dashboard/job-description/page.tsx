@@ -1,58 +1,38 @@
-import { Metadata } from 'next';
-import DashboardNav from '@/components/dashboard-nav';
+import React from 'react';
 
-export const metadata: Metadata = {
-  title: 'Job Description',
-  description: 'Enter the job description to tailor your CV',
-};
-
-export default function JobDescriptionPage() {
+const JobDescriptionPage = () => {
   return (
-    <div className='mx-auto max-w-7xl px-4 sm:px-6 lg:px-8'>
-      <div className='space-y-12'>
-        {/* Page Header */}
-        <div className='max-w-3xl space-y-4'>
-          <h1 className='text-4xl font-bold tracking-tight'>
-            Add Job Description
-          </h1>
-          <p className='text-muted-foreground text-lg'>
-            Enter the job description for the position you&apos;re applying to.
-          </p>
+    <div className='mx-auto w-full max-w-4xl py-8'>
+      <h1 className='mb-6 text-3xl font-bold tracking-tight'>
+        Enter Job Description
+      </h1>
+      <div className='rounded-lg border border-gray-200 bg-white p-6 shadow-sm'>
+        <p className='mb-6 text-gray-600'>
+          Enter the job description you&apos;re applying for to optimize your
+          CV.
+        </p>
+        <div className='mb-6'>
+          <label
+            htmlFor='jobDescription'
+            className='mb-2 block text-sm font-medium text-gray-700'
+          >
+            Job Description
+          </label>
+          <textarea
+            id='jobDescription'
+            rows={8}
+            className='w-full rounded-md border border-gray-300 p-3 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none'
+            placeholder='Paste or type the job description here...'
+          ></textarea>
         </div>
-
-        {/* Dashboard Navigation */}
-        <DashboardNav />
-
-        {/* Job Description Form */}
-        <div className='bg-card rounded-lg border p-8 shadow-sm'>
-          <div className='space-y-6'>
-            <div>
-              <label
-                htmlFor='jobDescription'
-                className='mb-2 block text-sm font-medium'
-              >
-                Job Description
-              </label>
-              <textarea
-                id='jobDescription'
-                rows={10}
-                className='border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring w-full rounded-md border p-3 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none'
-                placeholder='Paste the job description here...'
-              />
-              <p className='text-muted-foreground mt-2 text-sm'>
-                For best results, include the full job description with
-                requirements, responsibilities, and qualifications.
-              </p>
-            </div>
-
-            <div className='mt-6 flex justify-end'>
-              <button className='bg-primary text-primary-foreground hover:bg-primary/90 rounded-md px-6 py-3 font-medium'>
-                Continue to Review
-              </button>
-            </div>
-          </div>
+        <div className='flex justify-end'>
+          <button className='rounded-md bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700'>
+            Optimize My CV
+          </button>
         </div>
       </div>
     </div>
   );
-}
+};
+
+export default JobDescriptionPage;

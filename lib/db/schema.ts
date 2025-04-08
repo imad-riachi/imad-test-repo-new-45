@@ -5,6 +5,7 @@ import {
   text,
   timestamp,
   integer,
+  json,
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
@@ -68,6 +69,17 @@ export const invitations = pgTable('invitations', {
   status: varchar('status', { length: 20 }).notNull().default('pending'),
 });
 
+export const cvData = pgTable('cv_data', {
+  id: serial('id').primaryKey(),
+  originalFilename: text('original_filename').notNull(),
+  fileId: text('file_id').notNull().unique(),
+  userId: integer('user_id').references(() => users.id),
+  fileType: text('file_type').notNull(),
+  uploadedAt: timestamp('uploaded_at').notNull().defaultNow(),
+  content: json('content').notNull(),
+  rawContent: text('raw_content').notNull(),
+});
+
 export const teamsRelations = relations(teams, ({ many }) => ({
   teamMembers: many(teamMembers),
   activityLogs: many(activityLogs),
@@ -77,6 +89,7 @@ export const teamsRelations = relations(teams, ({ many }) => ({
 export const usersRelations = relations(users, ({ many }) => ({
   teamMembers: many(teamMembers),
   invitationsSent: many(invitations),
+  cvData: many(cvData),
 }));
 
 export const invitationsRelations = relations(invitations, ({ one }) => ({
@@ -112,6 +125,13 @@ export const activityLogsRelations = relations(activityLogs, ({ one }) => ({
   }),
 }));
 
+export const cvDataRelations = relations(cvData, ({ one }) => ({
+  user: one(users, {
+    fields: [cvData.userId],
+    references: [users.id],
+  }),
+}));
+
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
 export type Team = typeof teams.$inferSelect;
@@ -127,6 +147,8 @@ export type TeamDataWithMembers = Team & {
     user: Pick<User, 'id' | 'name' | 'email'>;
   })[];
 };
+export type CVData = typeof cvData.$inferSelect;
+export type NewCVData = typeof cvData.$inferInsert;
 
 export enum ActivityType {
   SIGN_UP = 'SIGN_UP',

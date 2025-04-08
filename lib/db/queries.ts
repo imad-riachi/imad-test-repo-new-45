@@ -1,8 +1,9 @@
 import { desc, and, eq, isNull } from 'drizzle-orm';
 import { db } from './drizzle';
-import { activityLogs, teamMembers, teams, users } from './schema';
+import { activityLogs, teamMembers, teams, users, cvData } from './schema';
 import { cookies } from 'next/headers';
 import { verifyToken } from '@/lib/auth/session';
+import type { NewCVData, CVData } from './schema';
 
 export async function getUser() {
   const sessionCookie = (await cookies()).get('session');
@@ -126,4 +127,68 @@ export async function getTeamForUser(userId: number) {
   });
 
   return result?.teamMembers[0]?.team || null;
+}
+
+// CV Data Queries
+export async function createCVData(data: NewCVData): Promise<CVData | null> {
+  try {
+    const result = await db.insert(cvData).values(data).returning();
+    return result[0] || null;
+  } catch (error) {
+    console.error('Error creating CV data:', error);
+    return null;
+  }
+}
+
+export async function getCVDataById(id: number): Promise<CVData | null> {
+  try {
+    const result = await db
+      .select()
+      .from(cvData)
+      .where(eq(cvData.id, id))
+      .limit(1);
+    return result[0] || null;
+  } catch (error) {
+    console.error('Error getting CV data by ID:', error);
+    return null;
+  }
+}
+
+export async function getCVDataByFileId(
+  fileId: string,
+): Promise<CVData | null> {
+  try {
+    const result = await db
+      .select()
+      .from(cvData)
+      .where(eq(cvData.fileId, fileId))
+      .limit(1);
+    return result[0] || null;
+  } catch (error) {
+    console.error('Error getting CV data by file ID:', error);
+    return null;
+  }
+}
+
+export async function getUserCVData(userId: number): Promise<CVData[]> {
+  try {
+    return await db
+      .select()
+      .from(cvData)
+      .where(eq(cvData.userId, userId))
+      .orderBy(desc(cvData.uploadedAt));
+  } catch (error) {
+    console.error('Error getting user CV data:', error);
+    return [];
+  }
+}
+
+export async function deleteCVData(id: number): Promise<boolean> {
+  try {
+    const result = await db.delete(cvData).where(eq(cvData.id, id)).returning();
+    return result.length > 0;
+  } catch (error) {
+    console.error('Error deleting CV data:', error);
+    return false;
+  }
 }
