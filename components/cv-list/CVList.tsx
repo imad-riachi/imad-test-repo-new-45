@@ -3,8 +3,8 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { formatDistanceToNow } from 'date-fns';
-import { FileText, Trash2, CheckCircle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { FileText, CheckCircle, AlertTriangle, Clock } from 'lucide-react';
+import DeleteConfirmDialog from './DeleteConfirmDialog';
 
 export type CVFile = {
   id: number;
@@ -20,6 +20,7 @@ export type CVListProps = {
   onSelect: (fileId: string) => void;
   selectedFileId?: string;
   className?: string;
+  isDeleting?: boolean;
 };
 
 const CVList: React.FC<CVListProps> = ({
@@ -28,6 +29,7 @@ const CVList: React.FC<CVListProps> = ({
   onSelect,
   selectedFileId,
   className,
+  isDeleting = false,
 }) => {
   if (files.length === 0) {
     return null;
@@ -36,18 +38,26 @@ const CVList: React.FC<CVListProps> = ({
   const getStatusIcon = (status?: string) => {
     switch (status) {
       case 'error':
-        return <span className='h-5 w-5 text-red-500'>⚠</span>;
+        return (
+          <AlertTriangle className='h-5 w-5 text-red-500 dark:text-red-400' />
+        );
       case 'pending':
-        return <span className='h-5 w-5 text-yellow-500'>⏳</span>;
+        return (
+          <Clock className='h-5 w-5 text-yellow-500 dark:text-yellow-400' />
+        );
       case 'processed':
       default:
-        return <CheckCircle className='h-5 w-5 text-green-500' />;
+        return (
+          <CheckCircle className='h-5 w-5 text-green-500 dark:text-green-400' />
+        );
     }
   };
 
   return (
     <div className={cn('w-full', className)}>
-      <h3 className='mb-2 text-lg font-medium'>Your Uploaded CVs</h3>
+      <h3 className='mb-2 text-lg font-medium text-gray-900 dark:text-gray-100'>
+        Your Uploaded CVs
+      </h3>
       <div className='space-y-2'>
         {files.map((file) => (
           <div
@@ -55,18 +65,20 @@ const CVList: React.FC<CVListProps> = ({
             className={cn(
               'flex items-center justify-between rounded-md border p-3 transition-colors',
               selectedFileId === file.fileId
-                ? 'border-blue-500 bg-blue-50'
-                : 'border-gray-200 hover:bg-gray-50',
+                ? 'border-blue-500 bg-blue-50 dark:border-blue-400 dark:bg-blue-900/20'
+                : 'border-gray-200 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800/50',
             )}
           >
             <div
               className='flex flex-1 cursor-pointer items-center gap-3'
               onClick={() => onSelect(file.fileId)}
             >
-              <FileText className='h-5 w-5 text-gray-500' />
+              <FileText className='h-5 w-5 text-gray-500 dark:text-gray-400' />
               <div className='flex-1'>
-                <p className='font-medium'>{file.filename}</p>
-                <p className='text-xs text-gray-500'>
+                <p className='font-medium text-gray-900 dark:text-gray-100'>
+                  {file.filename}
+                </p>
+                <p className='text-xs text-gray-500 dark:text-gray-400'>
                   Uploaded {formatDistanceToNow(new Date(file.uploadedAt))} ago
                 </p>
               </div>
@@ -74,18 +86,13 @@ const CVList: React.FC<CVListProps> = ({
               {/* Status indicator */}
               <div className='ml-2'>{getStatusIcon(file.status)}</div>
             </div>
-            <Button
-              variant='ghost'
-              size='sm'
-              onClick={(e) => {
-                e.stopPropagation();
-                onDelete(file.id);
-              }}
-              className='text-red-500 hover:bg-red-50 hover:text-red-600'
-            >
-              <Trash2 className='h-4 w-4' />
-              <span className='sr-only'>Delete</span>
-            </Button>
+
+            {/* Replace the delete button with the confirmation dialog */}
+            <DeleteConfirmDialog
+              fileName={file.filename}
+              onConfirm={() => onDelete(file.id)}
+              isDeleting={isDeleting}
+            />
           </div>
         ))}
       </div>

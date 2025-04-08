@@ -86,9 +86,15 @@ const CVUpload: React.FC<CVUploadProps> = ({ onFileUpload, className }) => {
       <div
         className={cn(
           'flex flex-col items-center justify-center rounded-md border-2 border-dashed p-6 transition-colors',
-          isDragging ? 'border-blue-400 bg-blue-50' : 'border-gray-300',
-          error ? 'border-red-400 bg-red-50' : '',
-          isSuccess ? 'border-green-400 bg-green-50' : '',
+          isDragging
+            ? 'border-blue-400 bg-blue-50 dark:border-blue-500 dark:bg-blue-900/20'
+            : 'border-gray-300 dark:border-gray-700',
+          error
+            ? 'border-red-400 bg-red-50 dark:border-red-500 dark:bg-red-900/20'
+            : '',
+          isSuccess
+            ? 'border-green-400 bg-green-50 dark:border-green-500 dark:bg-green-900/20'
+            : '',
         )}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
@@ -104,28 +110,30 @@ const CVUpload: React.FC<CVUploadProps> = ({ onFileUpload, className }) => {
 
         <div className='mb-4 text-center'>
           {isSuccess ? (
-            <CheckCircle2 className='mx-auto h-12 w-12 text-green-500' />
+            <CheckCircle2 className='mx-auto h-12 w-12 text-green-500 dark:text-green-400' />
           ) : error ? (
-            <AlertCircle className='mx-auto h-12 w-12 text-red-500' />
+            <AlertCircle className='mx-auto h-12 w-12 text-red-500 dark:text-red-400' />
           ) : (
-            <FileUp className='mx-auto h-12 w-12 text-gray-400' />
+            <FileUp className='mx-auto h-12 w-12 text-gray-400 dark:text-gray-500' />
           )}
         </div>
 
         <div className='mb-2 text-center'>
           {file ? (
-            <p className='text-sm font-medium'>{file.name}</p>
+            <p className='text-sm font-medium dark:text-white'>{file.name}</p>
           ) : (
-            <p className='text-sm text-gray-500'>
+            <p className='text-sm text-gray-500 dark:text-gray-400'>
               Drag and drop your CV file here, or click to browse
             </p>
           )}
         </div>
 
-        {error && <p className='mb-2 text-sm text-red-500'>{error}</p>}
+        {error && (
+          <p className='mb-2 text-sm text-red-500 dark:text-red-400'>{error}</p>
+        )}
 
         {isSuccess && (
-          <p className='mb-2 text-sm text-green-600'>
+          <p className='mb-2 text-sm text-green-600 dark:text-green-400'>
             File uploaded successfully!
           </p>
         )}
@@ -139,7 +147,7 @@ const CVUpload: React.FC<CVUploadProps> = ({ onFileUpload, className }) => {
           Browse Files
         </Button>
 
-        <p className='mt-2 text-xs text-gray-500'>
+        <p className='mt-2 text-xs text-gray-500 dark:text-gray-400'>
           Supported formats: .doc, .docx, Google Docs
         </p>
       </div>

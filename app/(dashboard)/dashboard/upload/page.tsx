@@ -144,12 +144,14 @@ const UploadPage = () => {
 
   return (
     <div className='mx-auto w-full max-w-4xl py-8'>
-      <h1 className='mb-6 text-3xl font-bold tracking-tight'>Upload Your CV</h1>
+      <h1 className='mb-6 text-3xl font-bold tracking-tight dark:text-white'>
+        Upload Your CV
+      </h1>
 
       {/* Previously uploaded CVs section */}
-      <div className='mb-8 rounded-lg border border-gray-200 bg-white p-6 shadow-sm'>
+      <div className='mb-8 rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-950'>
         <div className='mb-4 flex items-center justify-between'>
-          <h2 className='text-xl font-semibold'>Your CVs</h2>
+          <h2 className='text-xl font-semibold dark:text-white'>Your CVs</h2>
           <Button
             variant='outline'
             size='sm'
@@ -172,16 +174,18 @@ const UploadPage = () => {
         )}
 
         {loadingError && (
-          <div className='mb-4 rounded-md bg-red-50 p-4'>
+          <div className='mb-4 rounded-md bg-red-50 p-4 dark:bg-red-900/20'>
             <div className='flex'>
               <AlertCircle className='mr-2 h-5 w-5 text-red-400' />
-              <p className='text-sm text-red-700'>{loadingError}</p>
+              <p className='text-sm text-red-700 dark:text-red-400'>
+                {loadingError}
+              </p>
             </div>
           </div>
         )}
 
         {!isLoading && !loadingError && cvFiles.length === 0 && (
-          <p className='py-8 text-center text-gray-500'>
+          <p className='py-8 text-center text-gray-500 dark:text-gray-400'>
             You haven&apos;t uploaded any CVs yet.
           </p>
         )}
@@ -192,13 +196,16 @@ const UploadPage = () => {
           onSelect={handleSelectCV}
           selectedFileId={selectedFileId}
           className='mt-4'
+          isDeleting={isDeleting}
         />
       </div>
 
       {/* Upload new CV section */}
-      <div className='rounded-lg border border-gray-200 bg-white p-6 shadow-sm'>
-        <h2 className='mb-4 text-xl font-semibold'>Upload a New CV</h2>
-        <p className='mb-6 text-gray-600'>
+      <div className='rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-950'>
+        <h2 className='mb-4 text-xl font-semibold dark:text-white'>
+          Upload a New CV
+        </h2>
+        <p className='mb-6 text-gray-600 dark:text-gray-400'>
           Upload your CV file to begin optimization. We accept Word documents
           (.doc, .docx) and Google Docs.
         </p>
@@ -206,27 +213,33 @@ const UploadPage = () => {
         <CVUpload onFileUpload={handleFileUpload} />
 
         {isUploading && (
-          <div className='mt-6 rounded-md bg-blue-50 p-4'>
-            <p className='font-medium text-blue-800'>Uploading your CV...</p>
-            <p className='mt-2 text-sm text-blue-700'>
+          <div className='mt-6 rounded-md bg-blue-50 p-4 dark:bg-blue-900/20'>
+            <p className='font-medium text-blue-800 dark:text-blue-300'>
+              Uploading your CV...
+            </p>
+            <p className='mt-2 text-sm text-blue-700 dark:text-blue-400'>
               Please wait while we process your document.
             </p>
           </div>
         )}
 
         {uploadError && (
-          <div className='mt-6 rounded-md bg-red-50 p-4'>
-            <p className='font-medium text-red-800'>Error uploading your CV</p>
-            <p className='mt-2 text-sm text-red-700'>{uploadError}</p>
+          <div className='mt-6 rounded-md bg-red-50 p-4 dark:bg-red-900/20'>
+            <p className='font-medium text-red-800 dark:text-red-300'>
+              Error uploading your CV
+            </p>
+            <p className='mt-2 text-sm text-red-700 dark:text-red-400'>
+              {uploadError}
+            </p>
           </div>
         )}
 
         {uploadSuccess && (
-          <div className='mt-6 rounded-md bg-green-50 p-4'>
-            <p className='font-medium text-green-800'>
+          <div className='mt-6 rounded-md bg-green-50 p-4 dark:bg-green-900/20'>
+            <p className='font-medium text-green-800 dark:text-green-300'>
               Ready for the next step!
             </p>
-            <p className='mt-2 text-sm text-green-700'>
+            <p className='mt-2 text-sm text-green-700 dark:text-green-400'>
               &ldquo;{uploadedFile?.name}&rdquo; has been uploaded successfully.
               Redirecting to the next step...
             </p>
