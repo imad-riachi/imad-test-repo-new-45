@@ -32,6 +32,26 @@ export default defineConfig({
           setupFiles: ['.storybook/vitest.setup.ts'],
         },
       },
+      {
+        extends: true,
+        test: {
+          name: 'database',
+          include: ['lib/**/__tests__/*.test.ts'],
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: 'backend',
+          environment: 'node',
+          include: ['app/api/**/__tests__/*.test.ts'],
+        },
+        resolve: {
+          alias: {
+            '@': path.resolve(__dirname, './'),
+          },
+        },
+      },
     ],
   },
 });
