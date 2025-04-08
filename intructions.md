@@ -181,10 +181,10 @@ Develop a UI component (`CVDisplay.tsx`) that displays the rewritten CV in a cle
 
 **Acceptance Criteria:**
 
-- [ ] A display component is created that renders the rewritten CV.
-- [ ] The component's design follows the styling defined in `global.css` and Tailwind CSS.
-- [ ] Vitest tests ensure the component renders correctly with various CV data.
-- [ ] A Storybook story is created to showcase the component with sample data.
+- [x] A display component is created that renders the rewritten CV.
+- [x] The component's design follows the styling defined in `global.css` and Tailwind CSS.
+- [x] Vitest tests ensure the component renders correctly with various CV data.
+- [x] A Storybook story is created to showcase the component with sample data.
 
 ---
 
@@ -195,10 +195,10 @@ Develop a function that converts the rewritten CV into Markdown format and integ
 
 **Acceptance Criteria:**
 
-- [ ] A function (e.g., `convertToMarkdown()`) is created to convert CV data to Markdown.
-- [ ] Unit tests verify the conversion logic is correct.
-- [ ] A download button is added to the UI that triggers the Markdown conversion and download.
-- [ ] Manual testing confirms the Markdown file downloads correctly.
+- [x] A function (e.g., `convertToMarkdown()`) is created to convert CV data to Markdown.
+- [x] Unit tests verify the conversion logic is correct.
+- [x] A download button is added to the UI that triggers the Markdown conversion and download.
+- [x] Manual testing confirms the Markdown file downloads correctly.
 
 ---
 
@@ -209,11 +209,11 @@ Integrate an open-source library (e.g., pdf-lib or jsPDF) to generate a PDF vers
 
 **Acceptance Criteria:**
 
-- [ ] A PDF generation function (e.g., `generatePDF()`) is implemented.
-- [ ] The PDF output reflects the styling of the CV display component.
-- [ ] Vitest tests are created for PDF generation logic.
-- [ ] A download button for the PDF is added to the dashboard.
-- [ ] Manual testing confirms the PDF downloads and opens correctly.
+- [x] A PDF generation function (e.g., `generatePDF()`) is implemented.
+- [x] The PDF output reflects the styling of the CV display component.
+- [x] Vitest tests are created for PDF generation logic.
+- [x] A download button for the PDF is added to the dashboard.
+- [x] Manual testing confirms the PDF downloads and opens correctly.
 
 ---
 
