@@ -269,6 +269,19 @@ export const FilledForm: Story = {
 ## Unit tests
 Make sure to write unit tests where that is applicable. DO NOT WRITE unit tests for components thoshe should be tested in Storybooks. DO NOT USE Jest for testing, our project uses vitest for unit testing. When test fail report the failure and stop code execution until further notice. DO NOT TRY to fix tests by using Jest this will break all our tests running in production CI pipelines.
 
+## Running Unit tests
+
+Sine our unit tests are dependending on storybook make sure that storybook is up before running them 
+
+```bash
+nvm use #(make sure we are using the correct node version)
+
+# ❌ Avoid 
+# pnpm run storybook #(do not start storyboook)
+
+pnpm run test
+```
+
 ## Key Performance Rules
 
 1. Minimize `'use client'` directives

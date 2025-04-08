@@ -1,1 +1,1 @@
-export { default } from './PricingFeature';
+export { default, type PricingFeatureProps } from './PricingFeature';

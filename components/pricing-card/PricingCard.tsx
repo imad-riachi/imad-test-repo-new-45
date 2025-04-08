@@ -6,11 +6,9 @@ import { motion } from 'framer-motion';
 import PricingFeature from '@/components/pricing-feature';
 import PricingSubmitButton from '@/components/pricing-submit-button';
 
-import { checkoutAction } from '@/lib/payments/actions';
-
 import clsx from 'clsx';
 
-interface PricingCardProps {
+export type PricingCardProps = {
   name: string;
   price: number;
   interval: string;
@@ -25,7 +23,8 @@ interface PricingCardProps {
   featured?: boolean;
   highlightFeatureIndex?: number;
   priceId?: string;
-}
+  checkoutAction?: (formData: FormData) => Promise<void>;
+};
 
 const PricingCard: React.FC<PricingCardProps> = ({
   name,
@@ -42,6 +41,7 @@ const PricingCard: React.FC<PricingCardProps> = ({
   featured,
   highlightFeatureIndex,
   priceId,
+  checkoutAction,
 }) => {
   const [isHovering, setIsHovering] = useState(false);
 

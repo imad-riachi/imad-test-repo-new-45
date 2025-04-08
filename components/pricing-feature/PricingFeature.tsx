@@ -3,14 +3,14 @@
 import { motion } from 'framer-motion';
 import { Check, Star } from 'lucide-react';
 
-interface PricingFeatureProps {
+export type PricingFeatureProps = {
   feature: string;
   index: number;
   gradientFrom: string;
   gradientTo: string;
   highlight?: boolean;
   delay: number;
-}
+};
 
 const PricingFeature: React.FC<PricingFeatureProps> = ({
   feature,

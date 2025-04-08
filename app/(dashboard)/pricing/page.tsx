@@ -3,6 +3,8 @@ import { getStripePrices, getStripeProducts } from '@/lib/payments/stripe';
 import PricingHeader from '@/components/pricing-header';
 import PriceCard from '@/components/pricing-card';
 
+import { checkoutAction } from '@/lib/payments/actions';
+
 import content from '../../../content.json';
 
 const colorVariants = [
@@ -76,6 +78,7 @@ export default async function PricingPage() {
           const colors = colorVariants[index % colorVariants.length];
           return (
             <PriceCard
+              checkoutAction={checkoutAction}
               key={product.id}
               name={product?.name || 'Base'}
               price={price?.unitAmount || 800}

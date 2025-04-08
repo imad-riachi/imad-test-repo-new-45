@@ -1,1 +1,1 @@
-export { default } from './HeroSection';
+export { default, type HeroSectionProps } from './HeroSection';

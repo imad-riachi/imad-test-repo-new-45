@@ -1,1 +1,1 @@
-export { default } from './Navbar';
+export { default, type NavbarProps } from './Navbar';

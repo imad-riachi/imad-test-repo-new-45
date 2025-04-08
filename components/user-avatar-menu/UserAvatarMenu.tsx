@@ -1,4 +1,4 @@
-'use-client';
+'use client';
 
 import { useState } from 'react';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
@@ -12,10 +12,10 @@ import { Home, LogOut, Settings } from 'lucide-react';
 import Link from 'next/link';
 import { User } from '@/lib/db/schema';
 
-interface UserAvatarMenuProps {
+export type UserAvatarMenuProps = {
   user?: User | null;
   handleSignOut: () => void;
-}
+};
 
 const UserAvatarMenu: React.FC<UserAvatarMenuProps> = ({
   user,
