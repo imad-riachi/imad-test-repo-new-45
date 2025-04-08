@@ -1,12 +1,15 @@
 import React from 'react';
 import { Meta, StoryFn } from '@storybook/react';
 import { DashboardNavProps } from './DashboardNav';
-import { userEvent, within } from '@storybook/test';
+import { userEvent, within, expect } from '@storybook/test';
 
 // Create a mock component for Storybook that doesn't depend on usePathname
 const MockDashboardNav: React.FC<
-  DashboardNavProps & { activePath?: string }
-> = ({ className, activePath = '/dashboard/upload' }) => {
+  DashboardNavProps & {
+    activePath?: string;
+    onNavigation?: (path: string) => void;
+  }
+> = ({ className, activePath = '/dashboard/upload', onNavigation }) => {
   const navItems = [
     {
       name: 'Upload CV',
@@ -31,6 +34,11 @@ const MockDashboardNav: React.FC<
         <a
           key={item.name}
           href={item.href}
+          onClick={(e) => {
+            e.preventDefault();
+            onNavigation?.(item.href);
+          }}
+          data-testid={`nav-${item.name.toLowerCase().replace(/\s+/g, '-')}`}
           className={`group flex items-center rounded-md px-3 py-2 text-sm font-medium ${
             item.active
               ? 'bg-blue-100 text-blue-700'
@@ -63,18 +71,21 @@ export const Default = Template.bind({});
 Default.args = {
   className: 'w-64',
   activePath: '/dashboard/upload',
+  onNavigation: () => {},
 };
 
 export const JobDescriptionActive = Template.bind({});
 JobDescriptionActive.args = {
   className: 'w-64',
   activePath: '/dashboard/job-description',
+  onNavigation: () => {},
 };
 
 export const ReviewActive = Template.bind({});
 ReviewActive.args = {
   className: 'w-64',
   activePath: '/dashboard/review',
+  onNavigation: () => {},
 };
 
 // Play function for interaction testing
@@ -82,11 +93,22 @@ Default.play = async ({ canvasElement }) => {
   const canvas = within(canvasElement);
 
   // Check if all navigation items are rendered
-  canvas.getByText('Upload CV');
-  canvas.getByText('Job Description');
-  canvas.getByText('Review & Download');
+  expect(canvas.getByText('Upload CV')).toBeInTheDocument();
+  expect(canvas.getByText('Job Description')).toBeInTheDocument();
+  expect(canvas.getByText('Review & Download')).toBeInTheDocument();
+
+  // Verify the active item has the indicator
+  const uploadItem = canvas.getByTestId('nav-upload-cv');
+  expect(uploadItem).toHaveClass('bg-blue-100');
+  expect(uploadItem).toHaveClass('text-blue-700');
+
+  // Get job description link
+  const jobDescriptionLink = canvas.getByTestId('nav-job-description');
 
   // Simulate clicking on a navigation item
-  const jobDescriptionLink = canvas.getByText('Job Description');
   await userEvent.click(jobDescriptionLink);
+
+  // Since we're mocking the navigation, we simply verify the click happened
+  // and the element retains its styling (since we're not actually navigating)
+  expect(jobDescriptionLink).toHaveClass('text-gray-700');
 };
