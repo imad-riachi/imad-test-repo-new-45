@@ -1,3 +1,3 @@
 import PricingCard from './PricingCard';
 
-export default PricingCard;
+export { default, type PricingCardProps } from './PricingCard';

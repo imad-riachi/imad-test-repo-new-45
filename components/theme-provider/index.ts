@@ -1,3 +1,1 @@
-import { ThemeProvider } from './ThemeProvider';
-
-export default ThemeProvider;
+export { default, type ThemeProviderProps } from './ThemeProvider';

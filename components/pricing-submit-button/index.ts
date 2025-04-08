@@ -1,1 +1,1 @@
-export { default } from './PricingSubmitButton';
+export { default, type PricingSubmitButtonProps } from './PricingSubmitButton';

@@ -3,15 +3,15 @@
 import { ArrowRight, Loader2 } from 'lucide-react';
 import { useFormStatus } from 'react-dom';
 
-interface PricingButtonProps {
+export type PricingSubmitButtonProps = {
   gradientFrom: string;
   gradientTo: string;
   hoverFrom: string;
   hoverTo: string;
   label: string;
-}
+};
 
-const PricingButton: React.FC<PricingButtonProps> = ({
+const PricingSubmitButton: React.FC<PricingSubmitButtonProps> = ({
   gradientFrom,
   gradientTo,
   hoverFrom,
@@ -39,4 +39,4 @@ const PricingButton: React.FC<PricingButtonProps> = ({
   );
 };
 
-export default PricingButton;
+export default PricingSubmitButton;
