@@ -58,11 +58,11 @@ Create a file upload component (`CVUpload.tsx`) that allows users to upload thei
 
 **Acceptance Criteria:**
 
-- [ ] A React component is created that only accepts valid Word and Google Doc file types.
-- [ ] Client-side validation prevents unsupported file types from being submitted.
-- [ ] The component displays clear error messages on invalid file upload attempts.
-- [ ] Vitest tests cover file type validation and error display.
-- [ ] A Storybook story is available to demonstrate the upload component with interactive play functions.
+- [x] A React component is created that only accepts valid Word and Google Doc file types.
+- [x] Client-side validation prevents unsupported file types from being submitted.
+- [x] The component displays clear error messages on invalid file upload attempts.
+- [x] Vitest tests cover file type validation and error display.
+- [x] A Storybook story is available to demonstrate the upload component with interactive play functions.
 
 ---
 
@@ -73,11 +73,11 @@ Develop a module that extracts all content from the uploaded CV files (Word and 
 
 **Acceptance Criteria:**
 
-- [ ] A dedicated extraction module is created (e.g., `cvExtractor.ts`).
-- [ ] The module can process both Word and Google Doc file formats.
-- [ ] The output is a complete JSON representation of the CV's content.
-- [ ] Unit tests cover multiple file types and edge cases.
-- [ ] Code reviews confirm that no package downgrades are introduced.
+- [x] A dedicated extraction module is created (e.g., `cvExtractor.ts`).
+- [x] The module can process both Word and Google Doc file formats.
+- [x] The output is a complete JSON representation of the CV's content.
+- [x] Unit tests cover multiple file types and edge cases.
+- [x] Code reviews confirm that no package downgrades are introduced.
 
 ---
 
@@ -88,11 +88,11 @@ Develop an API endpoint under `app/api/cv` that accepts the uploaded file, proce
 
 **Acceptance Criteria:**
 
-- [ ] API endpoint (e.g., `app/api/cv/upload.ts`) is implemented.
-- [ ] The endpoint accepts file uploads and passes them to the extraction module.
-- [ ] The extracted JSON is successfully stored in the database.
-- [ ] Integration tests validate the complete upload-to-storage flow.
-- [ ] Appropriate error handling is implemented and tested.
+- [x] API endpoint (e.g., `app/api/cv/upload.ts`) is implemented.
+- [x] The endpoint accepts file uploads and passes them to the extraction module.
+- [x] The extracted JSON is successfully stored in the database.
+- [x] Integration tests validate the complete upload-to-storage flow.
+- [x] Appropriate error handling is implemented and tested.
 
 ---
 
@@ -103,11 +103,11 @@ Define the database schema (or extend existing models) for storing the extracted
 
 **Acceptance Criteria:**
 
-- [ ] A new database table or model for CV data is defined.
-- [ ] Migration scripts (if applicable) are created and documented.
-- [ ] Drizzle ORM models are implemented correctly.
-- [ ] Integration tests verify that data can be inserted and retrieved without issues.
-- [ ] Documentation is updated with the schema design.
+- [x] A new database table or model for CV data is defined.
+- [x] Migration scripts (if applicable) are created and documented.
+- [x] Drizzle ORM models are implemented correctly.
+- [x] Integration tests verify that data can be inserted and retrieved without issues.
+- [x] Documentation is updated with the schema design.
 
 ---
 
