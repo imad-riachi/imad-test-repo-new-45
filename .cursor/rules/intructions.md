@@ -11,11 +11,11 @@ Create a new dashboard landing page under `app/(dashboard)/dashboard` that serve
 
 **Acceptance Criteria:**
 
-- [ ] A new page is created at `app/(dashboard)/dashboard/index.tsx` that loads without errors.
-- [ ] The page displays a basic layout (header, footer, content area) consistent with the company branding.
-- [ ] Page renders correctly on multiple screen sizes.
-- [ ] Vitest tests are written to verify that the page renders without error.
-- [ ] A Storybook story is available to simulate the dashboard page.
+- [x] A new page is created at `app/(dashboard)/dashboard/page.tsx` that loads without errors.
+- [x] The page displays a basic layout (header, footer, content area) consistent with the company branding.
+- [x] Page renders correctly on multiple screen sizes.
+- [x] Vitest tests are written to verify that the page renders without error.
+- [x] A Storybook story is available to simulate the dashboard page.
 
 ---
 

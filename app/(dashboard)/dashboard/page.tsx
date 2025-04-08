@@ -1,17 +1,17 @@
-export default function DashboardPage() {
+import React from 'react';
+
+const DashboardPage: React.FC = () => {
   return (
-    <div className='mx-auto max-w-7xl px-4 sm:px-6 lg:px-8'>
-      <div className='space-y-12'>
-        {/* Welcome Section */}
-        <div className='max-w-3xl space-y-4'>
-          <h1 className='text-4xl font-bold tracking-tight sm:text-5xl'>
-            Welcome to Your SAAS Dashboard
-          </h1>
-          <p className='text-muted-foreground text-lg'>
-            Get started with building your SAAS application.
-          </p>
-        </div>
+    <main className='flex flex-1 flex-col p-4 md:p-6'>
+      <h1 className='text-2xl font-semibold'>Dashboard</h1>
+      <p className='mt-2 text-gray-600'>Welcome to your dashboard.</p>
+      {/* Content area for future components */}
+      <div className='mt-4 flex-1 rounded-lg border border-dashed p-4 shadow-sm'>
+        {/* Placeholder for dashboard widgets or content */}
+        <p className='text-center text-gray-500'>Dashboard content goes here</p>
       </div>
-    </div>
+    </main>
   );
-}
+};
+
+export default DashboardPage;
