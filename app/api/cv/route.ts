@@ -21,6 +21,7 @@ export async function GET(request: NextRequest) {
       fileId: cv.fileId,
       filename: cv.originalFilename,
       uploadedAt: cv.uploadedAt.toISOString(),
+      status: determineStatus(cv),
     }));
 
     return NextResponse.json({ files: formattedFiles });
@@ -31,4 +32,16 @@ export async function GET(request: NextRequest) {
       { status: 500 },
     );
   }
+}
+
+// Helper function to determine the status of a CV
+function determineStatus(cv: any) {
+  // In a real application, this would check various conditions
+  // For demonstration, we'll assume all files are processed successfully
+
+  // Example logic:
+  // if (some error condition) return 'error';
+  // if (processing not complete) return 'pending';
+
+  return 'processed';
 }

@@ -3,7 +3,7 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { formatDistanceToNow } from 'date-fns';
-import { FileText, Trash2 } from 'lucide-react';
+import { FileText, Trash2, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export type CVFile = {
@@ -11,6 +11,7 @@ export type CVFile = {
   fileId: string;
   filename: string;
   uploadedAt: string;
+  status?: 'processed' | 'pending' | 'error';
 };
 
 export type CVListProps = {
@@ -31,6 +32,18 @@ const CVList: React.FC<CVListProps> = ({
   if (files.length === 0) {
     return null;
   }
+
+  const getStatusIcon = (status?: string) => {
+    switch (status) {
+      case 'error':
+        return <span className='h-5 w-5 text-red-500'>⚠</span>;
+      case 'pending':
+        return <span className='h-5 w-5 text-yellow-500'>⏳</span>;
+      case 'processed':
+      default:
+        return <CheckCircle className='h-5 w-5 text-green-500' />;
+    }
+  };
 
   return (
     <div className={cn('w-full', className)}>
@@ -57,6 +70,9 @@ const CVList: React.FC<CVListProps> = ({
                   Uploaded {formatDistanceToNow(new Date(file.uploadedAt))} ago
                 </p>
               </div>
+
+              {/* Status indicator */}
+              <div className='ml-2'>{getStatusIcon(file.status)}</div>
             </div>
             <Button
               variant='ghost'
