@@ -58,3 +58,36 @@ Ticket 4.1 is complete with a reusable CV display component that supports:
 ### Status:
 
 Ticket 4.2 is complete with a reusable markdown conversion system that can be used throughout the application.
+
+## Ticket 4.3 - Implement PDF Generation & Download
+
+### Steps Completed:
+
+1. Installed `jspdf` library for PDF generation and handling
+2. Created a utility module at `lib/utils/pdf-generator.ts` with two main functions:
+   - `generatePDFFromCV` - Generates a PDF document from CV data
+   - `downloadPDF` - Handles triggering download of the generated PDF
+3. Implemented robust PDF styling with:
+   - Proper typography hierarchy (title, headings, body text)
+   - Intelligent page breaks to avoid content splitting
+   - Bullet points for list items
+   - Proper spacing between sections
+4. Created a new reusable component `PDFDownloadButton` to encapsulate the PDF generation and download functionality
+5. Added TypeScript types and props for customization of:
+   - Button text
+   - Filename
+   - Button styling
+6. Created Storybook stories for the button component:
+   - Default state with mocked PDF generation
+   - Disabled state when no CV data is available
+   - Custom text example
+7. Updated the review page to use the new component, replacing the placeholder PDF download button
+8. Fixed a TypeScript linter error related to possibly undefined array properties
+
+### Issues Encountered:
+
+- Had to fix a TypeScript error related to possibly undefined `cv.skills` array by refactoring a forEach loop to a traditional for loop
+
+### Status:
+
+Ticket 4.3 is complete with a full-featured PDF generation system that produces professional-looking documents from CV data.

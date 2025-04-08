@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import CVDisplay, { type CVData } from '@/components/cv-display';
 import MarkdownDownloadButton from '@/components/markdown-converter';
+import PDFDownloadButton from '@/components/pdf-converter';
 
 const ReviewPage = () => {
   const [rewrittenCV, setRewrittenCV] = useState<CVData | null>(null);
@@ -46,13 +47,6 @@ const ReviewPage = () => {
     }
   }, [router]);
 
-  // Function to generate PDF (placeholder for now)
-  const handleDownloadPDF = () => {
-    toast.info('PDF Download', {
-      description: 'PDF generation will be implemented in Sprint 4.3',
-    });
-  };
-
   return (
     <div className='mx-auto w-full max-w-4xl py-8'>
       <h1 className='mb-6 text-3xl font-bold tracking-tight'>
@@ -72,13 +66,7 @@ const ReviewPage = () => {
 
         <div className='flex flex-col gap-4 sm:flex-row sm:justify-end'>
           <MarkdownDownloadButton cv={rewrittenCV} />
-          <button
-            onClick={handleDownloadPDF}
-            disabled={!rewrittenCV}
-            className='rounded-md bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50'
-          >
-            Download as PDF
-          </button>
+          <PDFDownloadButton cv={rewrittenCV} />
         </div>
       </div>
     </div>
