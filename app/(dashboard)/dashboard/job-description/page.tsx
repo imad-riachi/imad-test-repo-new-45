@@ -56,12 +56,17 @@ const JobDescriptionPage = () => {
 
       const result = await response.json();
 
+      console.log('Received result from API:', result);
+      console.log('CV data to be stored:', result.data.rewrittenCV);
+
       // Store the rewritten CV in sessionStorage for the review page
       sessionStorage.setItem(
         'rewrittenCV',
         JSON.stringify(result.data.rewrittenCV),
       );
       sessionStorage.setItem('jobDescription', jobDescription);
+
+      console.log('Stored data in sessionStorage');
 
       toast.success('CV Successfully Optimized', {
         description: 'Your CV has been optimized for the job description.',

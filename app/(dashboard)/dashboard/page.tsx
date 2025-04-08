@@ -1,22 +1,7 @@
-<<<<<<< HEAD
 import DashboardNav from '@/components/dashboard-nav';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 
-export default function DashboardPage() {
-  return (
-    <div className='mx-auto max-w-7xl px-4 sm:px-6 lg:px-8'>
-      <div className='space-y-12'>
-        {/* Welcome Section */}
-        <div className='max-w-3xl space-y-4'>
-          <h1 className='text-4xl font-bold tracking-tight sm:text-5xl'>
-            CV Rewriting Service
-          </h1>
-          <p className='text-muted-foreground text-lg'>
-            Tailor your CV to match your dream job with our AI-powered CV
-            rewriting service.
-          </p>
-=======
 import React from 'react';
 
 const DashboardPage = () => {
@@ -56,7 +41,6 @@ const DashboardPage = () => {
           <button className='rounded-md bg-blue-600 px-6 py-2 text-white transition-colors hover:bg-blue-700'>
             Get Started
           </button>
->>>>>>> cv-management-improvements
         </div>
 
         {/* Dashboard Navigation */}

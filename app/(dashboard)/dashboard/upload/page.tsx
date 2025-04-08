@@ -98,6 +98,11 @@ const UploadPage = () => {
   // Navigate to next step with the selected CV
   const handleContinue = () => {
     if (selectedFileId) {
+      // Store the selected CV ID in sessionStorage so the job description page can access it
+      sessionStorage.setItem('selectedCvId', selectedFileId);
+      console.log('Stored CV ID in sessionStorage:', selectedFileId);
+
+      // Navigate to the job description page
       router.push('/dashboard/job-description');
     }
   };

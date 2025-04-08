@@ -3,6 +3,12 @@ import { expect, fn, userEvent, within } from '@storybook/test';
 import CVList, { CVFile, CVListProps } from './CVList';
 import { subDays } from 'date-fns';
 
+/*
+ * Note: When a CV is selected using this component, the parent component
+ * should store the selected fileId in sessionStorage with the key 'selectedCvId'
+ * This is required for the job description page to access the selected CV.
+ */
+
 const meta: Meta<typeof CVList> = {
   title: 'Components/CVList',
   component: CVList,

@@ -4,6 +4,7 @@ import {
   EducationEntry,
   ProjectEntry,
 } from '@/lib/cv/cvExtractor';
+import Anthropic from '@anthropic-ai/sdk';
 
 // Claude API response type
 export type ClaudeResponse = {
@@ -53,12 +54,18 @@ export async function optimizeCV(
   jobDescription: string,
 ): Promise<CVOptimizationResponse> {
   try {
+    console.log('Starting CV optimization with Anthropic SDK');
     // Claude API key from environment variable
     const apiKey = process.env.CLAUDE_API_KEY;
 
     if (!apiKey) {
       throw new Error('Claude API key not found in environment variables');
     }
+
+    // Initialize the Anthropic client
+    const anthropic = new Anthropic({
+      apiKey: apiKey,
+    });
 
     // Build the prompt with instructions and context
     const systemPrompt = `
@@ -71,73 +78,114 @@ export async function optimizeCV(
       4. Remove irrelevant information
       5. Format your response as JSON that matches the expected structure
       
-      Respond ONLY with properly formatted JSON that contains the rewritten CV content.
+      IMPORTANT: Your response MUST be valid JSON that can be parsed with JSON.parse(). 
+      Do not include any explanatory text outside the JSON object.
+      The JSON should have the following structure:
+      {
+        "summary": "string",
+        "experience": [
+          {
+            "company": "string",
+            "position": "string",
+            "date": "string",
+            "description": ["string"],
+            "achievements": ["string"]
+          }
+        ],
+        "skills": ["string"],
+        "education": [
+          {
+            "institution": "string",
+            "degree": "string",
+            "date": "string",
+            "description": "string"
+          }
+        ],
+        "projects": [
+          {
+            "name": "string",
+            "description": "string",
+            "technologies": ["string"]
+          }
+        ]
+      }
     `;
 
-    // Construct the request payload
-    const payload = {
+    console.log('Sending request using Anthropic SDK');
+
+    // Send the request using the SDK
+    const response = await anthropic.messages.create({
       model: 'claude-3-opus-20240229',
+      system: systemPrompt,
       messages: [
         {
-          role: 'system',
-          content: systemPrompt,
-        },
-        {
           role: 'user',
-          content: [
-            {
-              type: 'text',
-              text: `Here is my current CV:\n${JSON.stringify(cvContent, null, 2)}\n\nHere is the job description I'm applying for:\n${jobDescription}\n\nPlease optimize my CV for this job description.`,
-            },
-          ],
+          content: `Here is my current CV:\n${JSON.stringify(cvContent, null, 2)}\n\nHere is the job description I'm applying for:\n${jobDescription}\n\nPlease optimize my CV for this job description. IMPORTANT: Respond ONLY with a JSON object that follows the structure I specified. Do not include any explanation or text before or after the JSON object.`,
         },
       ],
       max_tokens: 4000,
       temperature: 0.2,
-    };
-
-    // Send the request to Claude API
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-      },
-      body: JSON.stringify(payload),
     });
 
-    if (!response.ok) {
-      const errorBody = await response.text();
-      throw new Error(`Claude API error: ${response.status} - ${errorBody}`);
-    }
-
-    const claudeResponse = (await response.json()) as ClaudeResponse;
+    console.log('Received response from Claude API');
 
     // Extract the JSON response from Claude
     let responseText = '';
-    for (const content of claudeResponse.content) {
-      if (content.type === 'text' && content.text) {
+    for (const content of response.content) {
+      if (content.type === 'text') {
         responseText += content.text;
       }
     }
 
+    console.log(
+      'Raw response from Claude:',
+      responseText.substring(0, 100) + '...',
+    );
+
     // Extract the JSON from the response
     // This handles cases where Claude might wrap the JSON in markdown code blocks
-    const jsonMatch = responseText.match(/```json\s*([\s\S]*?)\s*```/) ||
-      responseText.match(/```\s*([\s\S]*?)\s*```/) || [null, responseText];
+    const jsonMatch =
+      responseText.match(/```json\s*([\s\S]*?)\s*```/) ||
+      responseText.match(/```\s*([\s\S]*?)\s*```/) ||
+      responseText.match(/\{[\s\S]*\}/); // Try to find a JSON object directly
 
-    const jsonString = jsonMatch[1] ? jsonMatch[1].trim() : responseText.trim();
+    if (!jsonMatch) {
+      console.error('Could not find JSON in Claude response');
+      console.log('Response text starts with:', responseText.substring(0, 200));
+      throw new Error(
+        'Invalid response format: Could not extract JSON from Claude response',
+      );
+    }
 
-    // Parse the response into the expected format
-    const rewrittenCV = JSON.parse(
-      jsonString,
-    ) as CVOptimizationResponse['rewrites'];
+    const jsonString = jsonMatch[0].startsWith('{')
+      ? jsonMatch[0]
+      : jsonMatch[1].trim();
 
-    return {
-      rewrites: rewrittenCV,
-      rawResponse: claudeResponse,
-    };
+    console.log(
+      'Extracted JSON string starts with:',
+      jsonString.substring(0, 50) + '...',
+    );
+
+    try {
+      // Parse the response into the expected format
+      const rewrittenCV = JSON.parse(
+        jsonString,
+      ) as CVOptimizationResponse['rewrites'];
+
+      return {
+        rewrites: rewrittenCV,
+        rawResponse: response as unknown as ClaudeResponse,
+      };
+    } catch (parseError: unknown) {
+      console.error('JSON parsing error:', parseError);
+      console.log(
+        'Failed to parse JSON string:',
+        jsonString.substring(0, 100) + '...',
+      );
+      throw new Error(
+        `Failed to parse Claude response as JSON: ${parseError instanceof Error ? parseError.message : String(parseError)}`,
+      );
+    }
   } catch (error) {
     console.error('Error optimizing CV with Claude:', error);
     throw new Error(
