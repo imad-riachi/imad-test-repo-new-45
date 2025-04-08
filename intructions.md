@@ -11,7 +11,7 @@ Create a new dashboard landing page under `app/(dashboard)/dashboard` that serve
 
 **Acceptance Criteria:**
 
-- [x] A new page is created at `app/(dashboard)/dashboard/page.tsx` that loads without errors.
+- [x] A new page is created at `app/(dashboard)/dashboard/index.tsx` that loads without errors.
 - [x] The page displays a basic layout (header, footer, content area) consistent with the company branding.
 - [x] Page renders correctly on multiple screen sizes.
 - [x] Vitest tests are written to verify that the page renders without error.
@@ -26,11 +26,11 @@ Develop a responsive navigation menu within the dashboard that links to "Upload 
 
 **Acceptance Criteria:**
 
-- [ ] Navigation menu component is created in the `components/` folder (e.g., `DashboardNav.tsx`).
-- [ ] The navigation includes clearly labeled links to "Upload CV", "Job Description", and "Review & Download" sections.
-- [ ] Active, hover, and default states of menu items conform to the design guidelines.
-- [ ] Vitest tests are written to verify navigation link functionality.
-- [ ] A Storybook story is created showcasing the navigation in different states.
+- [x] Navigation menu component is created in the `components/` folder (e.g., `DashboardNav.tsx`).
+- [x] The navigation includes clearly labeled links to "Upload CV", "Job Description", and "Review & Download" sections.
+- [x] Active, hover, and default states of menu items conform to the design guidelines.
+- [x] Vitest tests are written to verify navigation link functionality.
+- [x] A Storybook story is created showcasing the navigation in different states.
 
 ---
 
@@ -41,11 +41,11 @@ Develop or update layout components to ensure a consistent design across all new
 
 **Acceptance Criteria:**
 
-- [ ] Layout components are created/updated to be reusable across the dashboard.
-- [ ] All new pages (Dashboard, CV Upload, Job Description, CV Review) use these layout components.
-- [ ] Manual tests confirm the layout renders correctly on various devices.
-- [ ] Unit tests verify that layout components render without errors.
-- [ ] Storybook stories document and demonstrate layout usage.
+- [x] Layout components are created/updated to be reusable across the dashboard.
+- [x] All new pages (Dashboard, CV Upload, Job Description, CV Review) use these layout components.
+- [x] Manual tests confirm the layout renders correctly on various devices.
+- [x] Unit tests verify that layout components render without errors.
+- [x] Storybook stories document and demonstrate layout usage.
 
 ---
 
