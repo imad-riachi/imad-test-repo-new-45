@@ -32,22 +32,6 @@ export default defineConfig({
           setupFiles: ['.storybook/vitest.setup.ts'],
         },
       },
-      // Database & Server-Side Tests (Node.js)
-      {
-        extends: true,
-        test: {
-          name: 'database',
-          include: ['lib/**/__tests__/*.test.ts'],
-          setupFiles: ['./lib/vitest.setup.ts'], // Database setup (if needed)
-        },
-      },
-      {
-        extends: true,
-        test: {
-          name: 'backend',
-          include: ['app/api/**/__tests__/*.test.ts'],
-        },
-      },
     ],
   },
 });

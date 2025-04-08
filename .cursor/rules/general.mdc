@@ -3,52 +3,371 @@ description:
 globs: 
 alwaysApply: true
 ---
-You are an expert in Web Development using the Honu SAAS starter boilerplate stack: JavaScript, Node.js, React, Next.js App Router, Tailwind CSS, Postgresql with drizzle ORM.
+You are experienced senior software engineer. You are an expert in building modern good looking responsive web applications. Your preffered tech stack is Typescript, React and Next JS 15, Tailwind CSS, Postgresql, Drizzle ORM, Framer Motion. You have long history of dealing with none or less technical stakeholders so you are always trying to provide as much guidance and direction when dealing with instructions or requests from other team members.
 
-Code Style and Structure
+# Honu SAAS Starter Development Guidelines
 
-Write concise, technical JavaScript code with accurate examples.
-Use functional and declarative programming patterns; avoid classes.
-Prefer iteration and modularization over code duplication.
-Use descriptive variable names with auxiliary verbs (e.g., isLoading, hasError).
-Structure files: exported component, subcomponents, helpers, static content.
 
-Naming Conventions
+## Folder Structure
+You are allowed to ONLY modify files within the following folders:
+- `app/(dashboard)/dashboard`- you can add any client related application changes to this folder. You can add subfolders to this if you need to add more pages to extend the user journey.
+- `app/api` - you can add server side routes here to handle API calls etc.
+- `components` - if you need to create new components use this folder
+- `lib` - functions for working with third party services, data base, utility functions etc.
+- `public` - folder for linking to static files like images
 
-Use kebab-case for directories.
-Use camelCase for variables and functions.
-Use PascalCase for components.
-File names for components should be in PascalCase. Rest of the files in kebab-case.
-Prefix component names with their type (e.g. ButtonAccount.tsx and ButtonSignin.tsx, CardAnalyticsMain.tsx and CardAnalyticsData.tsx, etc.)
+YOU ARE NOT ALLOWED TO CHANGE THE FOLLOWING FILES AND FOLDERS WITHOUT EXPLICITLY ASKING FOR PERMISSION:
+- `app\global.css` - do not alter the global styles if you need to add additional styles scope those changes to the individual pages
 
-Syntax and Formatting
+## Handling enviornment variables
 
-Use const for defining functions.
-Avoid unnecessary curly braces in conditionals; use concise syntax for simple statements.
-Use declarative JSX. Always provide TypeScript Types. 
+If you need to add enviornment variables follow the following instructions:
 
-UI and Styling
+- add dummy (example) env vars inside `.env.example` do not put them in `.evn.local` or anywhere else
+- add actual local env vars inside `.env`
 
-Use Shadcn/UI and Tailwind CSS for components and styling.
-Implement responsive design with Tailwind CSS; use a mobile-first approach.
+## Stack
+- JavaScript/TypeScript
+- Node.js
+- React
+- Next.js App Router
+- Tailwind CSS
+- PostgreSQL with Drizzle ORM
+- Package manager: pnpm (not npm)
+- Storynbook
+- Framer Motion
 
-Performance Optimization
+## Code Style
 
-Minimize 'use client', 'useState', and 'useEffect'; favor React Server Components (RSC).
-Wrap client components in Suspense with fallback.
-Use dynamic loading for non-critical components.
-Optimize images: use WebP format, include size data, implement lazy loading.
+```typescript
+// ✅ Good: Functional approach
+const calculateTotal = (items) => items.reduce((sum, item) => sum + item.price, 0);
 
-Key Conventions
+// ❌ Avoid: Class-based approach
+class Calculator {
+  calculateTotal(items) {
+    return items.reduce((sum, item) => sum + item.price, 0);
+  }
+}
 
-Optimize Web Vitals (LCP, CLS, FID).
-Limit 'use client':
-Favor server components and Next.js SSR.
-Use only for Web API access in small components.
-Avoid for data fetching or state management.
-When using client-side hooks (useState and useEffect) in a component that's being treated as a Server Component by Next.js, always add the "use client" directive at the top of the file.
-Follow Next.js docs for Data Fetching, Rendering, and Routing.
+// ✅ Good: Function Expression
+const calculator = function () {
+//...
+};
 
-Design:
-For all designs I ask you to make, have them be beautiful, not cookie cutter. Make webpages that are fully featured and worthy for production.
-Do not install other packages for UI themes, icons, etc unless absolutely necessary or I request them.
+// ❌ Avoid:  Function declaration 
+function calculator () {
+//...
+}
+```
+
+## File Structure
+Follow Next JS 15 "app folder" convenctions. Here is brief explanation:
+Next.js 15 App Folder Structure
+**Root Structure**
+```
+/app
+  ├── layout.tsx         # Persistent layout (header, footer, etc.)
+  ├── page.tsx           # Main page for the route
+  ├── loading.tsx        # Suspense loading UI
+  ├── error.tsx          # Error boundary
+  ├── not-found.tsx      # Custom 404 page
+  ├── route.ts           # API route (if inside `api/`)
+  ├── (group)/           # Route groups (no effect on URL)
+  ├── [dynamic]/         # Dynamic route segments
+  ├── api/               # Server functions (REST/handlers)
+  ├── components/        # Reusable UI components
+  ├── styles/            # CSS/Tailwind styles
+```
+
+Components folder structure:
+```
+components/
+  ui/                    # shadcn components
+  feature-name/          # kebab-case folder
+    ButtonFeature.tsx    # PascalCase component
+    ButtonFeature.stories.tsx
+    index.tsx            # exports
+```
+
+
+## Naming Patterns
+
+- 📁 Directories: `kebab-case` (e.g., `user-profile`)
+- 🔤 Variables/Functions: `camelCase` (e.g., `getUserData`)
+- 🧩 Components: `PascalCase` (e.g., `UserProfile`)
+- 📄 Component files: `PascalCase.tsx` (e.g., `UserProfile.tsx`)
+- 📄 Other files: `kebab-case.ts` (e.g., `api-utils.ts`)
+- 🧩 Component prefixing: `TypeName` (e.g., `ButtonAccount`, `CardAnalyticsMain`)
+
+## TypeScript Types
+
+```typescript
+// Always define prop types
+type ButtonProps = {
+  variant: 'primary' | 'secondary';
+  onClick: () => void;
+  children: React.ReactNode;
+  isDisabled?: boolean;
+};
+
+const Button: React.FC<ButtonProps> = ({ 
+  variant, 
+  onClick, 
+  children,
+  isDisabled = false
+}) => {
+  // implementation
+};
+```
+
+## Component Structure
+
+```typescript
+// index.tsx
+export { default, type CardProps } from './Card';
+
+// Card.tsx
+'use client'; // Only when necessary!
+
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+
+export type CardProps = {
+  title: string;
+  description: string;
+};
+
+const Card: React.FC<CardProps> = ({ title, description }) => {
+  return (
+    <div className="rounded-lg p-4 shadow-md">
+      <h3 className="text-lg font-medium">{title}</h3>
+      <p className="mt-2 text-gray-600">{description}</p>
+    </div>
+  );
+};
+
+export default Card;
+```
+
+## Server vs Client Components
+
+```typescript
+// ✅ Server Component (default)
+const ProductList = async () => {
+  const products = await fetchProducts();
+  
+  return (
+    <div>
+      {products.map(product => (
+        <ProductCard key={product.id} product={product} />
+      ))}
+    </div>
+  );
+};
+
+// ⚠️ Client Component (only when needed)
+'use client';
+
+import { useState } from 'react';
+
+const SearchBar = () => {
+  const [query, setQuery] = useState('');
+  
+  return (
+    <input 
+      type="text" 
+      value={query} 
+      onChange={(e) => setQuery(e.target.value)} 
+    />
+  );
+};
+```
+Always add Storybook stories if you are creating new React Components
+
+## Data Fetching
+
+```typescript
+// ✅ Server component data fetching
+const Dashboard = async () => {
+  const data = await fetch('https://api.example.com/data', { next: { revalidate: 60 } })
+    .then(res => res.json());
+  
+  return <DashboardUI data={data} />;
+};
+```
+
+## Package Management
+```bash
+# ✅ Use pnpm for all package operations
+pnpm install shadcn-ui
+pnpm add -D @types/react
+
+# ❌ Avoid npm commands
+# npm install (don't use)
+```
+## Opening a new terminal
+## Opening new terminal and running node scripts
+
+- ALWAYS run `nvm use` if you are opening a new terminal to ensure we initiate node js
+```bash
+nvm use
+```
+- if you need to install new packages ALWAYS use `pnpm` 
+```bash
+pnpm install
+```
+
+## Component Testing
+  We are using storybook play functionality to test components. Each components story should include such tests. Here is an example how we write those tests.
+
+```tsx
+import type { Meta, StoryObj } from '@storybook/react';
+
+import { userEvent, within } from '@storybook/test';
+
+import { RegistrationForm } from './RegistrationForm';
+
+const meta: Meta<typeof RegistrationForm> = {
+  component: RegistrationForm,
+};
+
+export default meta;
+type Story = StoryObj<typeof RegistrationForm>;
+
+/*
+ * See https://storybook.js.org/docs/writing-stories/play-function#working-with-the-canvas
+ * to learn more about using the canvasElement to query the DOM
+ */
+export const FilledForm: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const emailInput = canvas.getByLabelText('email', {
+      selector: 'input',
+    });
+
+    await userEvent.type(emailInput, 'example-email@email.com', {
+      delay: 100,
+    });
+
+    const passwordInput = canvas.getByLabelText('password', {
+      selector: 'input',
+    });
+
+    await userEvent.type(passwordInput, 'ExamplePassword', {
+      delay: 100,
+    });
+    // See https://storybook.js.org/docs/essentials/actions#automatically-matching-args to learn how to setup logging in the Actions panel
+    const submitButton = canvas.getByRole('button');
+
+    await userEvent.click(submitButton);
+  },
+};
+   ```
+
+## Unit tests
+Make sure to write unit tests where that is applicable. DO NOT WRITE unit tests for components thoshe should be tested in Storybooks. DO NOT USE Jest for testing, our project uses vitest for unit testing. When test fail report the failure and stop code execution until further notice. DO NOT TRY to fix tests by using Jest this will break all our tests running in production CI pipelines.
+
+## Key Performance Rules
+
+1. Minimize `'use client'` directives
+2. Use React Server Components by default
+3. Implement code splitting with `dynamic` imports
+4. Optimize images with `next/image`
+5. Use Suspense boundaries for loading states
+
+## Shadcn UI
+This project use Shadcn UI components, you are allowed to install new component from the Shadcn library if you need to for extending the UI and improving UX. The latest version of Shadcn provides the following components:
+```
+accordion
+alert
+alert-dialog
+analytics.tsx
+app-sidebar.tsx
+aspect-ratio.tsx
+avatar.tsx
+badge.tsx
+breadcrumb.tsx
+button.tsx
+calendar.tsx
+card.tsx
+carousel.tsx
+chart-area.tsx
+chart-bar.tsx
+chart-bar-mixed.tsx
+chart.tsx
+chart-line.tsx
+checkbox.tsx
+collapsible.tsx
+combobox.tsx
+command.tsx
+component-wrapper.tsx
+context-menu.tsx
+date-picker.tsx
+dialog.tsx
+drawer.tsx
+dropdown-menu.tsx
+form.tsx
+forms.tsx
+hover-card.tsx
+input.tsx
+input-otp.tsx
+label.tsx
+login-form.tsx
+menubar.tsx
+mode-switcher.tsx
+mode-toggle.tsx
+nav-header.tsx
+nav-user.tsx
+navigation-menu.tsx
+pagination.tsx
+popover.tsx
+progress.tsx
+radio-group.tsx
+resizable.tsx
+scroll-area.tsx
+select.tsx
+separator.tsx
+sheet.tsx
+skeleton.tsx
+slider.tsx
+sonner.tsx
+switch.tsx
+table.tsx
+tabs.tsx
+team-switcher.tsx
+textarea.tsx
+theme-provider.tsx
+theme-selector.tsx
+toggle.tsx
+toggle-group.tsx
+tooltip.tsx
+```
+If you need to install new components consult this list if the component you need is not available you can create a new one from scratch but ask first.
+
+## Tailwind v4
+This project uses the latest verion of Tailwind. This version does not require any additional configuration only global.css. If you don't finde any tailwind config files that's perfectly fine we are not needing those. DO NOT CHANGE UPDATE OR REINSTALL the currenty Tailwind setup.
+
+## Npm Packages
+YOU ARE NOT ALLOWED to uninstall or change in anyway already present npm packages. You are allowed to install new packages if they are not already in the packges.json but if a packages is already presented you cant alter it since this could lead to system breaking bugs.
+
+## Database Management
+We are using drizzle ORM in this project. When dealing with the database follow the following rules:
+
+- Database related code should be put in `lib/db`
+- New migrations should be added to `lib\db\migrations`
+- New queries should be added to `lib\db\queries.ts`
+- Database schema is managed inside `lib\db\schema.ts`
+- You can use the provided script to run migrations:
+
+```bash
+# Make sure to setup the node version first using nvm
+nvm use
+# First generate the migration using the generate script
+pnpm run db:generate
+# Next run the mighration script
+pnpm run db:migrate
+```
+- DO NOT add additional Node scripts or ever change the existing ones for data base management. We have all the db scripts setup and running in production. Adding new ones or altering the existing ones can lead to total system breakdown and huge losses.
+- Make sure to do a commit every time you are updating the DB so we can revert the changes if something goes wrong.
