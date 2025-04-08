@@ -3,14 +3,19 @@
 import React, { useState, useRef } from 'react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { AlertCircle, FileUp, CheckCircle2 } from 'lucide-react';
+import { AlertCircle, FileUp, CheckCircle2, Loader2 } from 'lucide-react';
 
 export type CVUploadProps = {
   onFileUpload: (file: File) => void;
   className?: string;
+  isUploading?: boolean;
 };
 
-const CVUpload: React.FC<CVUploadProps> = ({ onFileUpload, className }) => {
+const CVUpload: React.FC<CVUploadProps> = ({
+  onFileUpload,
+  className,
+  isUploading = false,
+}) => {
   const [file, setFile] = useState<File | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -92,8 +97,11 @@ const CVUpload: React.FC<CVUploadProps> = ({ onFileUpload, className }) => {
           error
             ? 'border-red-400 bg-red-50 dark:border-red-500 dark:bg-red-900/20'
             : '',
-          isSuccess
+          isSuccess || (file && !error && !isUploading)
             ? 'border-green-400 bg-green-50 dark:border-green-500 dark:bg-green-900/20'
+            : '',
+          isUploading
+            ? 'border-blue-400 bg-blue-50 dark:border-blue-500 dark:bg-blue-900/20'
             : '',
         )}
         onDragOver={handleDragOver}
@@ -106,10 +114,13 @@ const CVUpload: React.FC<CVUploadProps> = ({ onFileUpload, className }) => {
           onChange={handleFileChange}
           className='hidden'
           accept='.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.google-apps.document'
+          disabled={isUploading}
         />
 
         <div className='mb-4 text-center'>
-          {isSuccess ? (
+          {isUploading ? (
+            <Loader2 className='mx-auto h-12 w-12 animate-spin text-blue-500 dark:text-blue-400' />
+          ) : isSuccess || (file && !error && !isUploading) ? (
             <CheckCircle2 className='mx-auto h-12 w-12 text-green-500 dark:text-green-400' />
           ) : error ? (
             <AlertCircle className='mx-auto h-12 w-12 text-red-500 dark:text-red-400' />
@@ -120,7 +131,9 @@ const CVUpload: React.FC<CVUploadProps> = ({ onFileUpload, className }) => {
 
         <div className='mb-2 text-center'>
           {file ? (
-            <p className='text-sm font-medium dark:text-white'>{file.name}</p>
+            <p className='text-sm font-medium dark:text-white'>
+              {isUploading ? `Uploading: ${file.name}` : file.name}
+            </p>
           ) : (
             <p className='text-sm text-gray-500 dark:text-gray-400'>
               Drag and drop your CV file here, or click to browse
@@ -132,9 +145,15 @@ const CVUpload: React.FC<CVUploadProps> = ({ onFileUpload, className }) => {
           <p className='mb-2 text-sm text-red-500 dark:text-red-400'>{error}</p>
         )}
 
-        {isSuccess && (
+        {isUploading && file && (
+          <p className='mb-2 text-sm text-blue-600 dark:text-blue-400'>
+            Uploading your CV...
+          </p>
+        )}
+
+        {isSuccess && !isUploading && (
           <p className='mb-2 text-sm text-green-600 dark:text-green-400'>
-            File uploaded successfully!
+            File ready to upload!
           </p>
         )}
 
@@ -143,8 +162,16 @@ const CVUpload: React.FC<CVUploadProps> = ({ onFileUpload, className }) => {
           onClick={handleBrowseClick}
           variant={error ? 'destructive' : isSuccess ? 'outline' : 'default'}
           className='mt-2'
+          disabled={isUploading}
         >
-          Browse Files
+          {isUploading ? (
+            <>
+              <Loader2 className='mr-2 h-4 w-4 animate-spin' />
+              Uploading...
+            </>
+          ) : (
+            'Browse Files'
+          )}
         </Button>
 
         <p className='mt-2 text-xs text-gray-500 dark:text-gray-400'>

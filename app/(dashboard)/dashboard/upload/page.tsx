@@ -5,7 +5,13 @@ import { useRouter } from 'next/navigation';
 import CVUpload from '@/components/cv-upload';
 import CVList, { CVFile } from '@/components/cv-list';
 import { Button } from '@/components/ui/button';
-import { AlertCircle, Loader2, RefreshCw } from 'lucide-react';
+import {
+  AlertCircle,
+  ArrowRight,
+  CheckCircle,
+  Loader2,
+  RefreshCw,
+} from 'lucide-react';
 
 const UploadPage = () => {
   const router = useRouter();
@@ -87,10 +93,13 @@ const UploadPage = () => {
   // Select a CV
   const handleSelectCV = (fileId: string) => {
     setSelectedFileId(fileId);
+  };
 
-    // If a CV is already selected and job description page is ready,
-    // we could auto-navigate to it
-    router.push('/dashboard/job-description');
+  // Navigate to next step with the selected CV
+  const handleContinue = () => {
+    if (selectedFileId) {
+      router.push('/dashboard/job-description');
+    }
   };
 
   // Upload a new CV
@@ -122,11 +131,6 @@ const UploadPage = () => {
 
       // Refresh the CV list to include the new upload
       await fetchCVs();
-
-      // Redirect to the job description page after 2 seconds
-      setTimeout(() => {
-        router.push('/dashboard/job-description');
-      }, 2000);
     } catch (error) {
       console.error('Error uploading CV:', error);
       setUploadError(
@@ -198,6 +202,35 @@ const UploadPage = () => {
           className='mt-4'
           isDeleting={isDeleting}
         />
+
+        {/* Next step button */}
+        {cvFiles.length > 0 && (
+          <div className='mt-6 flex justify-end'>
+            <div className='flex-1'>
+              {selectedFileId && (
+                <p className='text-sm text-gray-600 dark:text-gray-400'>
+                  <CheckCircle className='mr-1 inline-block h-4 w-4 text-green-500' />
+                  You&apos;ve selected a CV. Click continue to proceed to the
+                  next step.
+                </p>
+              )}
+              {!selectedFileId && (
+                <p className='text-sm text-amber-600 dark:text-amber-400'>
+                  <AlertCircle className='mr-1 inline-block h-4 w-4' />
+                  Please select a CV to continue.
+                </p>
+              )}
+            </div>
+            <Button
+              onClick={handleContinue}
+              disabled={!selectedFileId}
+              className='ml-4'
+            >
+              Continue
+              <ArrowRight className='ml-2 h-4 w-4' />
+            </Button>
+          </div>
+        )}
       </div>
 
       {/* Upload new CV section */}
@@ -210,7 +243,7 @@ const UploadPage = () => {
           (.doc, .docx) and Google Docs.
         </p>
 
-        <CVUpload onFileUpload={handleFileUpload} />
+        <CVUpload onFileUpload={handleFileUpload} isUploading={isUploading} />
 
         {isUploading && (
           <div className='mt-6 rounded-md bg-blue-50 p-4 dark:bg-blue-900/20'>
@@ -237,11 +270,11 @@ const UploadPage = () => {
         {uploadSuccess && (
           <div className='mt-6 rounded-md bg-green-50 p-4 dark:bg-green-900/20'>
             <p className='font-medium text-green-800 dark:text-green-300'>
-              Ready for the next step!
+              CV uploaded successfully!
             </p>
             <p className='mt-2 text-sm text-green-700 dark:text-green-400'>
-              &ldquo;{uploadedFile?.name}&rdquo; has been uploaded successfully.
-              Redirecting to the next step...
+              &ldquo;{uploadedFile?.name}&rdquo; has been added to your CV list.
+              You can select it and continue to the next step.
             </p>
           </div>
         )}
