@@ -1,15 +1,54 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import CVUpload from '@/components/cv-upload';
 
 const UploadPage = () => {
+  const router = useRouter();
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [uploadSuccess, setUploadSuccess] = useState(false);
 
-  const handleFileUpload = (file: File) => {
+  const handleFileUpload = async (file: File) => {
     setUploadedFile(file);
-    // In a real implementation, we would send the file to the server here
-    console.log('File uploaded:', file.name);
+    setUploadError(null);
+    setIsUploading(true);
+
+    try {
+      // Create form data for the API request
+      const formData = new FormData();
+      formData.append('file', file);
+
+      // Send the file to our API endpoint
+      const response = await fetch('/api/cv/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to upload CV');
+      }
+
+      // Handle successful upload
+      setUploadSuccess(true);
+
+      // Redirect to the job description page after 2 seconds
+      setTimeout(() => {
+        router.push('/dashboard/job-description');
+      }, 2000);
+    } catch (error) {
+      console.error('Error uploading CV:', error);
+      setUploadError(
+        error instanceof Error ? error.message : 'An unknown error occurred',
+      );
+      setUploadSuccess(false);
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   return (
@@ -23,14 +62,30 @@ const UploadPage = () => {
 
         <CVUpload onFileUpload={handleFileUpload} />
 
-        {uploadedFile && (
+        {isUploading && (
+          <div className='mt-6 rounded-md bg-blue-50 p-4'>
+            <p className='font-medium text-blue-800'>Uploading your CV...</p>
+            <p className='mt-2 text-sm text-blue-700'>
+              Please wait while we process your document.
+            </p>
+          </div>
+        )}
+
+        {uploadError && (
+          <div className='mt-6 rounded-md bg-red-50 p-4'>
+            <p className='font-medium text-red-800'>Error uploading your CV</p>
+            <p className='mt-2 text-sm text-red-700'>{uploadError}</p>
+          </div>
+        )}
+
+        {uploadSuccess && (
           <div className='mt-6 rounded-md bg-green-50 p-4'>
             <p className='font-medium text-green-800'>
               Ready for the next step!
             </p>
             <p className='mt-2 text-sm text-green-700'>
-              &ldquo;{uploadedFile.name}&rdquo; has been uploaded successfully.
-              Move to the next step to enter the job description.
+              &ldquo;{uploadedFile?.name}&rdquo; has been uploaded successfully.
+              Redirecting to the next step...
             </p>
           </div>
         )}
