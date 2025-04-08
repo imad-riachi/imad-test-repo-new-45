@@ -1,7 +1,7 @@
 ---
 description: 
-globs: components/**/*.tsx
-alwaysApply: false
+globs: 
+alwaysApply: true
 ---
 ## Component Creation Guidelines
 

@@ -12,7 +12,11 @@ export default function DashboardLayout({
 }) {
   return (
     <div className='flex min-h-screen flex-col'>
-      <main className='flex-1'>{children}</main>
+      <main className='flex-1'>
+        <div className='container flex flex-col gap-8 py-6 md:flex-row'>
+          <div className='flex-1'>{children}</div>
+        </div>
+      </main>
     </div>
   );
 }
