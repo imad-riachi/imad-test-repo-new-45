@@ -181,7 +181,7 @@ export default function Dashboard() {
                   : 'bg-muted text-muted-foreground'
               }`}
             >
-              3. View Results
+              3. View & Export Results
             </div>
           </div>
 
@@ -216,20 +216,23 @@ export default function Dashboard() {
               <div>
                 <h3 className='font-medium'>1. Upload your CV</h3>
                 <p className='text-muted-foreground text-sm'>
-                  Upload your existing CV in PDF, Word, or plain text format
+                  Upload your existing CV in PDF, Word, or plain text format.
+                  Our system will extract and analyze the content.
                 </p>
               </div>
               <div>
                 <h3 className='font-medium'>2. Paste the job description</h3>
                 <p className='text-muted-foreground text-sm'>
-                  Provide the job description you&apos;re applying for
+                  Provide the job description you&apos;re applying for, and our
+                  AI will identify key requirements.
                 </p>
               </div>
               <div>
                 <h3 className='font-medium'>3. Get your optimized CV</h3>
                 <p className='text-muted-foreground text-sm'>
-                  Our AI will analyze your CV and tailor it to highlight
-                  relevant skills and experience
+                  Our AI will analyze your CV and job description to create a
+                  tailored CV with highlighted relevant skills. You can edit the
+                  results and download in Markdown or PDF format.
                 </p>
               </div>
             </CardContent>
@@ -246,31 +249,61 @@ export default function Dashboard() {
             onRewriteError={handleRewriteError}
           />
 
-          <ExtractedDataDisplay
-            data={{
-              name: extractedCV.name,
-              email: extractedCV.contactInfo?.email || '',
-              phone: extractedCV.contactInfo?.phone || '',
-              linkedin: extractedCV.contactInfo?.linkedin || '',
-              summary: extractedCV.summary || '',
-              workExperience:
-                extractedCV.workExperience?.map((exp) => ({
-                  company: exp.company,
-                  position: exp.position,
-                  duration: exp.period || '',
-                  description: Array.isArray(exp.responsibilities)
-                    ? exp.responsibilities.join('\n')
-                    : '',
-                })) || [],
-              education:
-                extractedCV.education?.map((edu) => ({
-                  institution: edu.institution,
-                  degree: edu.degree,
-                  date: edu.year || '',
-                })) || [],
-              skills: extractedCV.skills?.map((skill) => skill.name) || [],
-            }}
-          />
+          <div className='space-y-4'>
+            <Card>
+              <CardHeader>
+                <CardTitle>Your Extracted CV Data</CardTitle>
+                <CardDescription>
+                  Review the information extracted from your CV
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ExtractedDataDisplay
+                  data={{
+                    name: extractedCV.name,
+                    email: extractedCV.contactInfo?.email || '',
+                    phone: extractedCV.contactInfo?.phone || '',
+                    linkedin: extractedCV.contactInfo?.linkedin || '',
+                    summary: extractedCV.summary || '',
+                    workExperience:
+                      extractedCV.workExperience?.map((exp) => ({
+                        company: exp.company,
+                        position: exp.position,
+                        duration: exp.period || '',
+                        description: Array.isArray(exp.responsibilities)
+                          ? exp.responsibilities.join('\n')
+                          : '',
+                      })) || [],
+                    education:
+                      extractedCV.education?.map((edu) => ({
+                        institution: edu.institution,
+                        degree: edu.degree,
+                        date: edu.year || '',
+                      })) || [],
+                    skills:
+                      extractedCV.skills?.map((skill) => skill.name) || [],
+                  }}
+                />
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Next Steps</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className='text-muted-foreground mb-4 text-sm'>
+                  Paste a job description in the form to the left. Our AI will
+                  analyze both your CV and the job description to create an
+                  optimized version.
+                </p>
+                <p className='text-muted-foreground text-sm'>
+                  The optimized CV will highlight relevant skills and experience
+                  that match the job requirements.
+                </p>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       )}
 
@@ -333,12 +366,22 @@ export default function Dashboard() {
             </Card>
           </div>
 
-          <CvEditablePreview
-            cvData={rewriteResponse.rewrittenCv}
-            onSave={handleSaveCvEdits}
-            onGeneratePdf={handleGeneratePdf}
-            onGenerateMarkdown={handleGenerateMarkdown}
-          />
+          <Card className='mb-6'>
+            <CardHeader>
+              <CardTitle>Edit and Export Your Optimized CV</CardTitle>
+              <CardDescription>
+                Make changes to your CV and download it in your preferred format
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <CvEditablePreview
+                cvData={rewriteResponse.rewrittenCv}
+                onSave={handleSaveCvEdits}
+                onGeneratePdf={handleGeneratePdf}
+                onGenerateMarkdown={handleGenerateMarkdown}
+              />
+            </CardContent>
+          </Card>
 
           <div className='flex justify-center'>
             <Button onClick={handleReset}>Start New Optimization</Button>

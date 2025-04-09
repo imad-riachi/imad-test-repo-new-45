@@ -5,6 +5,7 @@
  */
 
 import { extractTextFromCV } from './text-extractor';
+import { unlink } from 'fs/promises';
 
 export interface ContactInfo {
   email?: string;
@@ -409,6 +410,22 @@ export function parseCV(cvContent: string): CvData {
     education: extractEducation(cvContent),
     skills: extractSkills(cvContent),
   };
+}
+
+/**
+ * Clean up temporary files after processing
+ *
+ * @param filePath Path to the temporary file to remove
+ * @returns Promise that resolves when file is deleted or rejects if an error occurs
+ */
+export async function cleanupTempFile(filePath: string): Promise<void> {
+  try {
+    await unlink(filePath);
+    console.log(`Temporary file ${filePath} has been removed`);
+  } catch (error) {
+    console.error(`Failed to remove temporary file ${filePath}:`, error);
+    throw error;
+  }
 }
 
 /**

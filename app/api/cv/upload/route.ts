@@ -4,7 +4,7 @@ import { mkdir, writeFile } from 'fs/promises';
 import { db } from '@/lib/db/drizzle';
 import { getSession } from '@/lib/auth/session';
 import { cvFiles } from '@/lib/db/schema';
-import { processCVFile } from '@/lib/cv-parser/cv-parser';
+import { processCVFile, cleanupTempFile } from '@/lib/cv-parser/cv-parser';
 
 // Maximum file size (5MB)
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
@@ -115,10 +115,26 @@ export async function POST(request: NextRequest) {
       try {
         const extractedData = await processCVFile(filePath, file.type);
         response.data = extractedData;
+
+        // Clean up the temporary file after processing
+        try {
+          await cleanupTempFile(filePath);
+          console.log('Temporary file cleaned up successfully');
+        } catch (cleanupError) {
+          console.error('Error cleaning up temporary file:', cleanupError);
+          // Don't fail the request if cleanup fails
+        }
       } catch (extractError) {
         console.error('Error extracting CV data:', extractError);
         // We don't want to fail the upload if extraction fails
         response.extractionError = 'Failed to extract CV data';
+
+        // Try to clean up even if extraction failed
+        try {
+          await cleanupTempFile(filePath);
+        } catch (cleanupError) {
+          console.error('Error cleaning up temporary file:', cleanupError);
+        }
       }
     }
 
