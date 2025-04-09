@@ -68,6 +68,20 @@ export const invitations = pgTable('invitations', {
   status: varchar('status', { length: 20 }).notNull().default('pending'),
 });
 
+export const cvFiles = pgTable('cv_files', {
+  id: serial('id').primaryKey(),
+  userId: integer('user_id')
+    .notNull()
+    .references(() => users.id),
+  fileName: varchar('file_name', { length: 255 }).notNull(),
+  fileType: varchar('file_type', { length: 100 }).notNull(),
+  fileSize: integer('file_size').notNull(), // in bytes
+  filePath: text('file_path').notNull(),
+  originalName: varchar('original_name', { length: 255 }).notNull(),
+  uploadedAt: timestamp('uploaded_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+});
+
 export const teamsRelations = relations(teams, ({ many }) => ({
   teamMembers: many(teamMembers),
   activityLogs: many(activityLogs),
@@ -77,6 +91,7 @@ export const teamsRelations = relations(teams, ({ many }) => ({
 export const usersRelations = relations(users, ({ many }) => ({
   teamMembers: many(teamMembers),
   invitationsSent: many(invitations),
+  cvFiles: many(cvFiles),
 }));
 
 export const invitationsRelations = relations(invitations, ({ one }) => ({
@@ -112,6 +127,13 @@ export const activityLogsRelations = relations(activityLogs, ({ one }) => ({
   }),
 }));
 
+export const cvFilesRelations = relations(cvFiles, ({ one }) => ({
+  user: one(users, {
+    fields: [cvFiles.userId],
+    references: [users.id],
+  }),
+}));
+
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
 export type Team = typeof teams.$inferSelect;
@@ -127,6 +149,8 @@ export type TeamDataWithMembers = Team & {
     user: Pick<User, 'id' | 'name' | 'email'>;
   })[];
 };
+export type CvFile = typeof cvFiles.$inferSelect;
+export type NewCvFile = typeof cvFiles.$inferInsert;
 
 export enum ActivityType {
   SIGN_UP = 'SIGN_UP',
