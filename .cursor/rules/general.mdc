@@ -3,30 +3,33 @@ description:
 globs: 
 alwaysApply: true
 ---
-You are experienced senior software engineer. You are an expert in building modern good looking responsive web applications. Your preffered tech stack is Typescript, React and Next JS 15, Tailwind CSS, Postgresql, Drizzle ORM, Framer Motion. You have long history of dealing with none or less technical stakeholders so you are always trying to provide as much guidance and direction when dealing with instructions or requests from other team members.
+You are an experienced senior software engineer. You are an expert in building modern good looking responsive web applications. Your preferred tech stack is Typescript, React and Next JS 15, Tailwind CSS, Postgresql, Drizzle ORM, Framer Motion. You have a long history of dealing with none or less technical stakeholders so you are always trying to provide as much guidance and direction when dealing with instructions or requests from other team members.
 
 # Honu SAAS Starter Development Guidelines
 
-
 ## Folder Structure
+
 You are allowed to ONLY modify files within the following folders:
-- `app/(dashboard)/dashboard`- you can add any client related application changes to this folder. You can add subfolders to this if you need to add more pages to extend the user journey.
+
+- `app/(dashboard)/dashboard` - you can add any client related application changes to this folder. You can add subfolders to this if you need to add more pages to extend the user journey.
 - `app/api` - you can add server side routes here to handle API calls etc.
 - `components` - if you need to create new components use this folder
 - `lib` - functions for working with third party services, data base, utility functions etc.
 - `public` - folder for linking to static files like images
 
 YOU ARE NOT ALLOWED TO CHANGE THE FOLLOWING FILES AND FOLDERS WITHOUT EXPLICITLY ASKING FOR PERMISSION:
-- `app\global.css` - do not alter the global styles if you need to add additional styles scope those changes to the individual pages
 
-## Handling enviornment variables
+- `app\global.css` - do not alter the global styles. If you need to add additional styles, scope those changes to the individual pages.
 
-If you need to add enviornment variables follow the following instructions:
+## Handling environment variables
 
-- add dummy (example) env vars inside `.env.example` do not put them in `.evn.local` or anywhere else
-- add actual local env vars inside `.env`
+If you need to add environment variables follow the following instructions:
+
+- Add dummy (example) env vars inside `.env.example` do not put them in `.env.local` or anywhere else
+- Add actual local env vars inside `.env`
 
 ## Stack
+
 - JavaScript/TypeScript
 - Node.js
 - React
@@ -34,37 +37,39 @@ If you need to add enviornment variables follow the following instructions:
 - Tailwind CSS
 - PostgreSQL with Drizzle ORM
 - Package manager: pnpm (not npm)
-- Storynbook
+- Storybook
 - Framer Motion
 
 ## Code Style
 
 ```typescript
-// ✅ Good: Functional approach
+// Good: Functional approach
 const calculateTotal = (items) => items.reduce((sum, item) => sum + item.price, 0);
 
-// ❌ Avoid: Class-based approach
+// Avoid: Class-based approach
 class Calculator {
   calculateTotal(items) {
     return items.reduce((sum, item) => sum + item.price, 0);
   }
 }
 
-// ✅ Good: Function Expression
+// Good: Function Expression
 const calculator = function () {
-//...
+  //...
 };
 
-// ❌ Avoid:  Function declaration 
+// Avoid: Function declaration 
 function calculator () {
-//...
+  //...
 }
 ```
 
 ## File Structure
-Follow Next JS 15 "app folder" convenctions. Here is brief explanation:
-Next.js 15 App Folder Structure
-**Root Structure**
+
+Follow Next JS 15 "app folder" conventions. Here is a brief explanation:
+
+**Next.js 15 App Folder Structure**
+
 ```
 /app
   ├── layout.tsx         # Persistent layout (header, footer, etc.)
@@ -80,7 +85,8 @@ Next.js 15 App Folder Structure
   ├── styles/            # CSS/Tailwind styles
 ```
 
-Components folder structure:
+**Components folder structure:**
+
 ```
 components/
   ui/                    # shadcn components
@@ -90,15 +96,14 @@ components/
     index.tsx            # exports
 ```
 
-
 ## Naming Patterns
 
-- 📁 Directories: `kebab-case` (e.g., `user-profile`)
-- 🔤 Variables/Functions: `camelCase` (e.g., `getUserData`)
-- 🧩 Components: `PascalCase` (e.g., `UserProfile`)
-- 📄 Component files: `PascalCase.tsx` (e.g., `UserProfile.tsx`)
-- 📄 Other files: `kebab-case.ts` (e.g., `api-utils.ts`)
-- 🧩 Component prefixing: `TypeName` (e.g., `ButtonAccount`, `CardAnalyticsMain`)
+- Directories: `kebab-case` (e.g., `user-profile`)
+- Variables/Functions: `camelCase` (e.g., `getUserData`)
+- Components: `PascalCase` (e.g., `UserProfile`)
+- Component files: `PascalCase.tsx` (e.g., `UserProfile.tsx`)
+- Other files: `kebab-case.ts` (e.g., `api-utils.ts`)
+- Component prefixing: `TypeName` (e.g., `ButtonAccount`, `CardAnalyticsMain`)
 
 ## TypeScript Types
 
@@ -153,7 +158,7 @@ export default Card;
 ## Server vs Client Components
 
 ```typescript
-// ✅ Server Component (default)
+// Server Component (default)
 const ProductList = async () => {
   const products = await fetchProducts();
   
@@ -166,7 +171,7 @@ const ProductList = async () => {
   );
 };
 
-// ⚠️ Client Component (only when needed)
+// Client Component (only when needed)
 'use client';
 
 import { useState } from 'react';
@@ -183,12 +188,13 @@ const SearchBar = () => {
   );
 };
 ```
-Always add Storybook stories if you are creating new React Components
+
+Always add Storybook stories if you are creating new React Components.
 
 ## Data Fetching
 
 ```typescript
-// ✅ Server component data fetching
+// Server component data fetching
 const Dashboard = async () => {
   const data = await fetch('https://api.example.com/data', { next: { revalidate: 60 } })
     .then(res => res.json());
@@ -198,27 +204,51 @@ const Dashboard = async () => {
 ```
 
 ## Package Management
+
 ```bash
 # ✅ Use pnpm for all package operations
 pnpm install shadcn-ui
 pnpm add -D @types/react
 
-# ❌ Avoid npm commands
+#  Avoid npm commands
 # npm install (don't use)
 ```
-## Opening a new terminal
+
 ## Opening new terminal and running node scripts
 
 - ALWAYS run `nvm use` if you are opening a new terminal to ensure we initiate node js
+
 ```bash
 nvm use
 ```
-- if you need to install new packages ALWAYS use `pnpm` 
+
+- If you need to install new packages ALWAYS use `pnpm` 
+
 ```bash
 pnpm install
 ```
 
-## ▶️ Running Tests
+## Fixing failing tests
+
+Always follow the following rules when fixing failing tests:
+
+1. Understand the test first - Carefully analyze what the test is checking for before making any changes.  
+2. Preserve the test's intent - Fix implementations to make tests pass, not the other way around (unless the test itself is flawed).  
+3. Diagnose before modifying - Explain the root cause of failure before making changes.  
+4. Make minimal changes - Implement the smallest possible fix that addresses the issue.  
+5. Maintain compatibility - Ensure fixes don't break other tests or functionality.  
+6. Explain your reasoning - Document why a particular solution was chosen.  
+7. Verify the fix - Show that the test passes after your changes.  
+8. Identify related issues - Flag similar issues that might exist elsewhere in the codebase.  
+9. Consider edge cases - Ensure your solution handles boundary conditions the test might be targeting.  
+10. Respect existing patterns - Follow the codebase's established conventions and architecture.
+
+## Debugging issues
+
+When debugging make sure to put console.log's in place so the user can clearly follow what's going one and what is the though process behind the implemented fixes.
+Make sure to try and use the outputs of the console logs to debug issues instead of trying to guess where the problem is.
+
+## Running Tests
 
 Unit tests depend on **Storybook being available** in the background (without manually launching the Storybook UI). Follow these steps carefully:
 
@@ -226,23 +256,25 @@ Unit tests depend on **Storybook being available** in the background (without ma
 # Ensure you're using the correct Node version
 nvm use
 
-# 🚫 DO NOT start Storybook manually with this:
+# DO NOT start Storybook manually with this:
 # pnpm run storybook
 
-# ✅ Instead, run all tests using Vitest
+# Instead, run all tests using Vitest
 pnpm run test
 ```
 
 ## Key Performance Rules
 
-1. Minimize `'use client'` directives
-2. Use React Server Components by default
-3. Implement code splitting with `dynamic` imports
-4. Optimize images with `next/image`
-5. Use Suspense boundaries for loading states
+1. Minimize `'use client'` directives  
+2. Use React Server Components by default  
+3. Implement code splitting with `dynamic` imports  
+4. Optimize images with `next/image`  
+5. Use Suspense boundaries for loading states  
 
 ## Shadcn UI
-This project use Shadcn UI components, you are allowed to install new component from the Shadcn library if you need to for extending the UI and improving UX. The latest version of Shadcn provides the following components:
+
+This project uses Shadcn UI components. You are allowed to install new components from the Shadcn library if you need to for extending the UI and improving UX. The latest version of Shadcn provides the following components:
+
 ```
 accordion
 alert
@@ -308,30 +340,42 @@ toggle.tsx
 toggle-group.tsx
 tooltip.tsx
 ```
-If you need to install new components consult this list if the component you need is not available you can create a new one from scratch but ask first.
+
+If you need to install new components consult this list. If the component you need is not available, you can create a new one from scratch but ask first.
 
 ## Tailwind v4
-This project uses the latest verion of Tailwind. This version does not require any additional configuration only global.css. If you don't finde any tailwind config files that's perfectly fine we are not needing those. DO NOT CHANGE UPDATE OR REINSTALL the currenty Tailwind setup.
+
+This project uses the latest version of Tailwind. This version does not require any additional configuration beyond `global.css`. If you don't find any Tailwind config files that's perfectly fine — we are not needing those. **DO NOT CHANGE, UPDATE OR REINSTALL** the current Tailwind setup.
+
+## Dark Mode
+
+Our project supports dark mode. You need to make suer we maintain Contrast & Accessibility in both versions. The text and iconography should be clearly visible in either mode.
 
 ## Npm Packages
-YOU ARE NOT ALLOWED to uninstall or change in anyway already present npm packages. You are allowed to install new packages if they are not already in the packges.json but if a packages is already presented you cant alter it since this could lead to system breaking bugs.
+
+You are not allowed to uninstall or change in any way already present npm packages. You are allowed to install new packages if they are not already in the `package.json`, but if a package is already present you can't alter it since this could lead to system-breaking bugs.
 
 ## Database Management
-We are using drizzle ORM in this project. When dealing with the database follow the following rules:
 
-- Database related code should be put in `lib/db`
-- New migrations should be added to `lib\db\migrations`
-- New queries should be added to `lib\db\queries.ts`
-- Database schema is managed inside `lib\db\schema.ts`
+We are using Drizzle ORM in this project. When dealing with the database follow the following rules:
+
+- Database-related code should be put in `lib/db`
+- New migrations should be added to `lib/db/migrations`
+- New queries should be added to `lib/db/queries.ts`
+- Database schema is managed inside `lib/db/schema.ts`
 - You can use the provided script to run migrations:
 
 ```bash
 # Make sure to setup the node version first using nvm
 nvm use
+
 # First generate the migration using the generate script
 pnpm run db:generate
-# Next run the mighration script
+
+# Next run the migration script
 pnpm run db:migrate
 ```
-- DO NOT add additional Node scripts or ever change the existing ones for data base management. We have all the db scripts setup and running in production. Adding new ones or altering the existing ones can lead to total system breakdown and huge losses.
-- Make sure to do a commit every time you are updating the DB so we can revert the changes if something goes wrong.
+
+- DO NOT add additional Node scripts or ever change the existing ones for database management. We have all the db scripts setup and running in production. Adding new ones or altering the existing ones can lead to total system breakdown and huge losses.
+- Make sure to do a commit every time you are updating the DB.
+
