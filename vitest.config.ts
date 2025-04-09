@@ -44,7 +44,21 @@ export default defineConfig({
         test: {
           name: 'backend',
           environment: 'node',
-          include: ['app/api/**/__tests__/*.test.ts'],
+          include: ['app/api/**/__tests__/*.test.ts', 'app/api/**/*.test.ts'],
+        },
+        resolve: {
+          alias: {
+            '@': path.resolve(__dirname, './'),
+          },
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: 'components',
+          environment: 'jsdom',
+          include: ['components/**/*.test.tsx', 'components/**/*.test.ts'],
+          setupFiles: ['./vitest.setup.ts'],
         },
         resolve: {
           alias: {

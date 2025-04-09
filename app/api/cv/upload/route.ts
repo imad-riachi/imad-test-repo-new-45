@@ -4,6 +4,7 @@ import { mkdir, writeFile } from 'fs/promises';
 import { db } from '@/lib/db/drizzle';
 import { getSession } from '@/lib/auth/session';
 import { cvFiles } from '@/lib/db/schema';
+import { processCVFile } from '@/lib/cv-parser/cv-parser';
 
 // Maximum file size (5MB)
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
@@ -32,6 +33,10 @@ export async function POST(request: NextRequest) {
     if (!userId) {
       return NextResponse.json({ error: 'Invalid user ID' }, { status: 400 });
     }
+
+    // Get URL parameters - check if we should extract data immediately
+    const { searchParams } = new URL(request.url);
+    const extractData = searchParams.get('extract') === 'true';
 
     // Parse the form data from the request
     const formData = await request.formData();
@@ -96,17 +101,29 @@ export async function POST(request: NextRequest) {
       })
       .returning();
 
+    // Prepare the response
+    const response: any = {
+      id: newFile[0].id,
+      name: originalName,
+      type: file.type,
+      size: file.size,
+      url: `/api/cv/files/${newFile[0].id}`,
+    };
+
+    // If extract=true, process the CV file and extract structured data
+    if (extractData) {
+      try {
+        const extractedData = await processCVFile(filePath, file.type);
+        response.data = extractedData;
+      } catch (extractError) {
+        console.error('Error extracting CV data:', extractError);
+        // We don't want to fail the upload if extraction fails
+        response.extractionError = 'Failed to extract CV data';
+      }
+    }
+
     // Return success response
-    return NextResponse.json(
-      {
-        id: newFile[0].id,
-        name: originalName,
-        type: file.type,
-        size: file.size,
-        url: `/api/cv/files/${newFile[0].id}`,
-      },
-      { status: 201 },
-    );
+    return NextResponse.json(response, { status: 201 });
   } catch (error) {
     console.error('Error uploading file:', error);
     return NextResponse.json(

@@ -10,10 +10,12 @@ export type CvUploadFormProps = {
     name: string;
     type: string;
     url: string;
+    data?: any;
   }) => void;
   onUploadError?: (error: string) => void;
   className?: string;
   maxSizeMB?: number;
+  extractData?: boolean;
 };
 
 const CvUploadForm: React.FC<CvUploadFormProps> = ({
@@ -21,6 +23,7 @@ const CvUploadForm: React.FC<CvUploadFormProps> = ({
   onUploadError,
   className,
   maxSizeMB = 5, // Default 5MB max size
+  extractData = false, // Default: don't extract data
 }) => {
   const [file, setFile] = useState<File | null>(null);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
@@ -119,8 +122,12 @@ const CvUploadForm: React.FC<CvUploadFormProps> = ({
         });
       }, 300);
 
-      // Send the file to the API
-      const response = await fetch('/api/cv/upload', {
+      // Send the file to the API with the extract parameter if needed
+      const uploadUrl = extractData
+        ? '/api/cv/upload?extract=true'
+        : '/api/cv/upload';
+
+      const response = await fetch(uploadUrl, {
         method: 'POST',
         body: formData,
       });
@@ -141,6 +148,7 @@ const CvUploadForm: React.FC<CvUploadFormProps> = ({
           name: file.name,
           type: file.type,
           url: responseData.url || '',
+          data: responseData.data,
         });
       }
 

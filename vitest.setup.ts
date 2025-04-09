@@ -1,4 +1,5 @@
 import { expect, afterEach, vi } from 'vitest';
+import '@testing-library/jest-dom';
 
 // Cleanup after each test case
 afterEach(() => {
@@ -75,3 +76,6 @@ export const createMockDb = () => ({
     // Add other tables as needed
   },
 });
+
+// This file sets up testing-library environment for component tests
+// It's imported in the vitest.config.ts for component tests
