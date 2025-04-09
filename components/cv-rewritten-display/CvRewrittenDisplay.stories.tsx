@@ -1,181 +1,155 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import CvRewrittenDisplay from './CvRewrittenDisplay';
-import { RewriteResponse } from '@/lib/cv-rewriter/rewriter';
 
+// Sample CV data for testing
+const originalCv = {
+  name: 'John Doe',
+  contactInfo: {
+    email: 'john.doe@example.com',
+    phone: '555-123-4567',
+  },
+  summary:
+    'Experienced software developer with skills in JavaScript and React.',
+  workExperience: [
+    {
+      company: 'Tech Company',
+      position: 'Frontend Developer',
+      period: '2020-Present',
+      responsibilities: [
+        'Developed web applications using React',
+        'Worked with a team of 5 developers',
+        'Improved website performance',
+      ],
+    },
+  ],
+  education: [
+    {
+      institution: 'University',
+      degree: 'Computer Science',
+      year: '2019',
+    },
+  ],
+  skills: [{ name: 'JavaScript' }, { name: 'React' }, { name: 'HTML/CSS' }],
+};
+
+// Sample rewritten CV with enhancements
+const rewrittenCv = {
+  name: 'John Doe',
+  contactInfo: {
+    email: 'john.doe@example.com',
+    phone: '555-123-4567',
+  },
+  summary:
+    'Experienced software developer with skills in JavaScript and React seeking a Frontend Developer role where skills in React, TypeScript, and JavaScript can be utilized.',
+  workExperience: [
+    {
+      company: 'Tech Company',
+      position: 'Frontend Developer',
+      period: '2020-Present',
+      responsibilities: [
+        'Developed web applications using React (key skill for this role)',
+        'Collaborated with a team of 5 developers to deliver projects on time and within budget',
+        'Improved website performance by 40% through code optimization',
+      ],
+    },
+  ],
+  education: [
+    {
+      institution: 'University',
+      degree: 'Computer Science',
+      year: '2019',
+    },
+  ],
+  skills: [
+    { name: 'JavaScript', level: 'Advanced' },
+    { name: 'React', level: 'Advanced' },
+    { name: 'HTML/CSS', level: 'Intermediate' },
+    { name: 'TypeScript', level: 'Intermediate' },
+  ],
+};
+
+// Sample matching skills
+const matchingSkills = ['React', 'JavaScript'];
+
+// Sample improvement suggestions
+const improvements = [
+  'Consider adding more TypeScript examples to your work experience',
+  'Add quantifiable achievements to demonstrate your impact',
+  'Include specific examples of projects related to React, JavaScript, TypeScript',
+];
+
+/**
+ * CvRewrittenDisplay component shows the optimized version of a CV
+ * after it has been processed for a specific job description
+ */
 const meta: Meta<typeof CvRewrittenDisplay> = {
   title: 'Components/CvRewrittenDisplay',
   component: CvRewrittenDisplay,
   parameters: {
-    layout: 'centered',
+    layout: 'padded',
   },
-  tags: ['autodocs'],
+  args: {
+    originalCv,
+    rewrittenCv,
+    matchingSkills,
+    improvements,
+  },
 };
 
 export default meta;
 type Story = StoryObj<typeof CvRewrittenDisplay>;
 
-// Sample CV data and rewrite response for the stories
-const sampleRewriteResponse: RewriteResponse = {
-  originalCv: {
-    name: 'John Doe',
-    contactInfo: {
-      email: 'john.doe@example.com',
-      phone: '+1 123-456-7890',
-      linkedin: 'linkedin.com/in/johndoe',
-    },
-    summary:
-      'Experienced software engineer with 5+ years of expertise in web development and cloud technologies.',
-    workExperience: [
-      {
-        company: 'Tech Solutions Inc.',
-        position: 'Senior Developer',
-        period: '2020-Present',
-        responsibilities: [
-          'Developed web applications using React and Node.js',
-          'Led a team of 5 developers for multiple projects',
-          'Improved application performance by 40%',
-        ],
-      },
-      {
-        company: 'WebDev Company',
-        position: 'Frontend Developer',
-        period: '2018-2020',
-        responsibilities: [
-          'Built responsive UIs using modern JavaScript frameworks',
-          'Collaborated with designers to implement user interfaces',
-          'Participated in code reviews and mentored junior developers',
-        ],
-      },
-    ],
-    education: [
-      {
-        institution: 'University of Technology',
-        degree: 'Bachelor of Science in Computer Science',
-        year: '2018',
-      },
-    ],
-    skills: [
-      { name: 'JavaScript', level: 'Expert' },
-      { name: 'React', level: 'Advanced' },
-      { name: 'Node.js', level: 'Intermediate' },
-      { name: 'TypeScript', level: 'Advanced' },
-      { name: 'HTML/CSS', level: 'Expert' },
-    ],
-    languages: ['English', 'Spanish'],
-  },
+/**
+ * Default display with a rewritten CV and matches
+ */
+export const Default: Story = {};
 
-  rewrittenCv: {
-    name: 'John Doe',
-    contactInfo: {
-      email: 'john.doe@example.com',
-      phone: '+1 123-456-7890',
-      linkedin: 'linkedin.com/in/johndoe',
-    },
-    summary:
-      'Experienced software engineer with 5+ years of expertise in web development and cloud technologies. Particularly skilled in React Native, mobile app development, and user experience design, with a proven track record of delivering results aligned with business objectives.',
-    workExperience: [
-      {
-        company: 'Tech Solutions Inc.',
-        position: 'Senior Developer',
-        period: '2020-Present',
-        responsibilities: [
-          'Developed scalable mobile applications using React Native and Node.js',
-          'Led a team of 5 developers to deliver cross-platform mobile solutions for multiple clients',
-          'Improved application performance by 40% through code optimization and architecture improvements',
-        ],
-      },
-      {
-        company: 'WebDev Company',
-        position: 'Frontend Developer',
-        period: '2018-2020',
-        responsibilities: [
-          'Implemented responsive UIs using modern JavaScript frameworks including React Native',
-          'Collaborated with designers to implement pixel-perfect mobile interfaces',
-          'Participated in code reviews and mentored junior developers on mobile development best practices',
-        ],
-      },
-    ],
-    education: [
-      {
-        institution: 'University of Technology',
-        degree: 'Bachelor of Science in Computer Science',
-        year: '2018',
-      },
-    ],
-    skills: [
-      { name: 'JavaScript', level: 'Expert' },
-      { name: 'React', level: 'Advanced' },
-      { name: 'React Native', level: 'Advanced' },
-      { name: 'Node.js', level: 'Intermediate' },
-      { name: 'TypeScript', level: 'Advanced' },
-      { name: 'HTML/CSS', level: 'Expert' },
-      { name: 'Mobile App Development', level: 'Advanced' },
-    ],
-    languages: ['English', 'Spanish'],
-  },
-
-  jobDescription: `
-    Senior Mobile Developer (React Native)
-    
-    ABC Mobile Technologies is looking for an experienced Senior Mobile Developer with strong React Native skills to join our team. The ideal candidate will have a proven track record of building high-quality, performant mobile applications for both iOS and Android platforms.
-    
-    Key Requirements:
-    - 3+ years of experience with React Native development
-    - Strong understanding of mobile UX/UI principles
-    - Experience with state management in complex applications
-    - Knowledge of native modules integration
-    - Ability to optimize application performance
-    - Experience leading development teams is a plus
-    
-    We offer competitive compensation, flexible working arrangements, and opportunities for professional growth.
-  `,
-
-  matches: {
-    skills: [
-      'React',
-      'JavaScript',
-      'Node.js',
-      'React Native',
-      'Mobile App Development',
-    ],
-    experience: [
-      'Senior Developer at Tech Solutions Inc.: Developed scalable mobile applications using React Native and Node.js',
-      'Senior Developer at Tech Solutions Inc.: Led a team of 5 developers to deliver cross-platform mobile solutions for multiple clients',
-      'Frontend Developer at WebDev Company: Implemented responsive UIs using modern JavaScript frameworks including React Native',
-    ],
-  },
-
-  improvements: [
-    'Enhanced professional summary to better align with job requirements',
-    'Highlighted mobile development experience throughout work history',
-    'Added more relevant skills like React Native and Mobile App Development',
-    'Emphasized team leadership experience which is listed as a plus in the job posting',
-  ],
-};
-
-// Default story
-export const Default: Story = {
+/**
+ * Display with no matching skills
+ */
+export const NoMatches: Story = {
   args: {
-    rewriteResponse: sampleRewriteResponse,
-    className: 'max-w-screen-xl',
+    matchingSkills: [],
   },
 };
 
-// Minimal Matches
-export const MinimalMatches: Story = {
+/**
+ * Display with no improvement suggestions
+ */
+export const NoImprovements: Story = {
   args: {
-    rewriteResponse: {
-      ...sampleRewriteResponse,
-      matches: {
-        skills: ['JavaScript'],
-        experience: [],
+    improvements: [],
+  },
+};
+
+/**
+ * Display with minimal CV data
+ */
+export const MinimalCv: Story = {
+  args: {
+    originalCv: {
+      name: 'John Smith',
+      contactInfo: {
+        email: 'john.smith@example.com',
       },
-      improvements: [
-        'Add more skills mentioned in the job description such as React Native',
-        'Include examples of mobile development experience in your work history',
-        'Consider mentioning any experience with native module integration',
-      ],
+      workExperience: [],
+      education: [],
+      skills: [{ name: 'JavaScript' }],
     },
-    className: 'max-w-screen-xl',
+    rewrittenCv: {
+      name: 'John Smith',
+      contactInfo: {
+        email: 'john.smith@example.com',
+      },
+      summary: 'Beginner developer with interest in JavaScript development.',
+      workExperience: [],
+      education: [],
+      skills: [{ name: 'JavaScript', level: 'Beginner' }],
+    },
+    matchingSkills: ['JavaScript'],
+    improvements: [
+      'Add work experience and education details',
+      'Consider adding more skills relevant to the job description',
+    ],
   },
 };

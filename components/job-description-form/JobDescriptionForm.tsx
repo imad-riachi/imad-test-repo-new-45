@@ -1,56 +1,62 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Button } from '../ui/button';
-import { Textarea } from '../ui/textarea';
-import { Label } from '../ui/label';
-import { AlertCircle } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Textarea } from '@/components/ui/textarea';
 import { CvData } from '@/lib/cv-parser/cv-parser';
+import { RewriteResponse } from '@/lib/cv-rewriter/rewriter';
 
 export interface JobDescriptionFormProps {
+  /** The CV data that will be optimized */
   cvData: CvData;
-  onRewriteComplete?: (rewriteResponse: {
-    originalCv: CvData;
-    rewrittenCv: CvData;
-    jobDescription: string;
-    matches: {
-      skills: string[];
-      experience: string[];
-    };
-    improvements: string[];
-  }) => void;
-  onRewriteError?: (error: string) => void;
+  /** Optional callback for when rewrite is complete */
+  onRewriteComplete?: (response: RewriteResponse) => void;
+  /** Optional callback for handling errors */
+  onRewriteError?: (message: string) => void;
+  /** Optional class name for the form */
   className?: string;
 }
 
+/**
+ * Form for entering a job description to optimize a CV
+ */
 const JobDescriptionForm: React.FC<JobDescriptionFormProps> = ({
   cvData,
   onRewriteComplete,
   onRewriteError,
   className,
 }) => {
-  const [jobDescription, setJobDescription] = useState<string>('');
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [jobDescription, setJobDescription] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const [wordCount, setWordCount] = useState<number>(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [wordCount, setWordCount] = useState(0);
 
-  // Update word count when job description changes
-  const handleJobDescriptionChange = (
+  // Calculate word count when job description changes
+  const handleDescriptionChange = (
     e: React.ChangeEvent<HTMLTextAreaElement>,
   ) => {
     const value = e.target.value;
     setJobDescription(value);
-    setWordCount(value.trim() ? value.trim().split(/\s+/).length : 0);
+    setError(null);
 
-    // Clear error when user starts typing
-    if (error) {
-      setError(null);
-    }
+    // Count words
+    const words = value.trim().split(/\s+/).filter(Boolean);
+    setWordCount(words.length);
   };
 
+  // Validate and submit the form
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Reset error state
+    setError(null);
 
     // Validate input
     if (!jobDescription.trim()) {
@@ -58,18 +64,20 @@ const JobDescriptionForm: React.FC<JobDescriptionFormProps> = ({
       return;
     }
 
-    if (wordCount < 10) {
+    // Check word count (minimum 10 words)
+    const words = jobDescription.trim().split(/\s+/).filter(Boolean);
+    if (words.length < 10) {
       setError(
         'Please provide a more detailed job description (at least 10 words)',
       );
       return;
     }
 
+    // Start submission
     setIsSubmitting(true);
-    setError(null);
 
     try {
-      // Send the data to the API
+      // Call the API
       const response = await fetch('/api/cv/rewrite', {
         method: 'POST',
         headers: {
@@ -82,22 +90,25 @@ const JobDescriptionForm: React.FC<JobDescriptionFormProps> = ({
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to rewrite CV');
+        throw new Error('Failed to rewrite CV');
       }
 
-      const rewriteResponse = await response.json();
+      // Parse the response
+      const data = await response.json();
 
-      // Call the callback if provided
+      // Call the success callback if provided
       if (onRewriteComplete) {
-        onRewriteComplete(rewriteResponse);
+        onRewriteComplete(data);
       }
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : 'An unknown error occurred';
+      console.error('Error submitting job description:', error);
 
+      // Set error message
+      const errorMessage =
+        error instanceof Error ? error.message : 'An unexpected error occurred';
       setError(errorMessage);
 
+      // Call the error callback if provided
       if (onRewriteError) {
         onRewriteError(errorMessage);
       }
@@ -107,52 +118,50 @@ const JobDescriptionForm: React.FC<JobDescriptionFormProps> = ({
   };
 
   return (
-    <form onSubmit={handleSubmit} className={cn('space-y-4', className)}>
-      <div className='space-y-2'>
-        <Label htmlFor='jobDescription' className='text-base font-medium'>
-          Job Description
-        </Label>
-        <Textarea
-          id='jobDescription'
-          placeholder='Paste the job description here...'
-          value={jobDescription}
-          onChange={handleJobDescriptionChange}
-          className='min-h-32 resize-y'
-          disabled={isSubmitting}
-        />
-        <div className='text-muted-foreground flex items-center justify-between text-xs'>
-          <div>
-            <span>{wordCount}</span> words
-          </div>
-          {wordCount < 10 && wordCount > 0 && (
-            <div className='flex items-center gap-1 text-amber-500'>
-              <AlertCircle className='h-3 w-3' />
-              <span>Add more details for better results</span>
+    <Card className={className}>
+      <CardHeader>
+        <CardTitle>Job Description</CardTitle>
+      </CardHeader>
+      <form onSubmit={handleSubmit}>
+        <CardContent>
+          <div className='space-y-4'>
+            <div className='space-y-2'>
+              <label
+                htmlFor='jobDescription'
+                className='text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70'
+              >
+                Job Description
+              </label>
+              <Textarea
+                id='jobDescription'
+                placeholder='Paste the job description here to optimize your CV for this specific job'
+                value={jobDescription}
+                onChange={handleDescriptionChange}
+                rows={8}
+                disabled={isSubmitting}
+                className='resize-none'
+              />
+              <div className='text-muted-foreground flex justify-between text-xs'>
+                <span>{wordCount} words</span>
+                {wordCount < 10 && wordCount > 0 && (
+                  <span className='text-amber-500'>
+                    Add at least {10 - wordCount} more words
+                  </span>
+                )}
+              </div>
+              {error && (
+                <p className='text-destructive text-sm font-medium'>{error}</p>
+              )}
             </div>
-          )}
-        </div>
-      </div>
-
-      {error && (
-        <div className='text-destructive flex items-center gap-1 px-1 text-sm'>
-          <AlertCircle className='h-3 w-3' />
-          <span>{error}</span>
-        </div>
-      )}
-
-      <Button
-        type='submit'
-        className='w-full'
-        disabled={isSubmitting || wordCount < 10}
-      >
-        {isSubmitting ? 'Optimizing CV...' : 'Optimize CV for This Job'}
-      </Button>
-
-      <p className='text-muted-foreground text-center text-xs'>
-        Our AI will rewrite your CV to highlight relevant skills and experience
-        for this job
-      </p>
-    </form>
+          </div>
+        </CardContent>
+        <CardFooter>
+          <Button type='submit' disabled={isSubmitting} className='w-full'>
+            {isSubmitting ? 'Optimizing...' : 'Optimize CV for this job'}
+          </Button>
+        </CardFooter>
+      </form>
+    </Card>
   );
 };
 

@@ -184,9 +184,10 @@ function extractLinkedIn(text: string): string | undefined {
  * @param text The CV text
  * @returns An object containing contact information
  */
-function extractContactInfo(text: string): ContactInfo {
+function extractContactInfo(text: string): CvData['contactInfo'] {
+  const email = extractEmail(text);
   return {
-    email: extractEmail(text),
+    email: email || 'no-email@example.com', // Ensure email is always a string
     phone: extractPhone(text),
     linkedin: extractLinkedIn(text),
   };
@@ -196,9 +197,9 @@ function extractContactInfo(text: string): ContactInfo {
  * Helper function to extract name from text
  *
  * @param text The CV text
- * @returns The extracted name or undefined
+ * @returns The extracted name, never undefined
  */
-function extractName(text: string): string | undefined {
+function extractName(text: string): string {
   // Look for lines that start with "Resume of" or lines at the beginning
   const resumeOfRegex = /Resume of\s+([A-Za-z\s]+)/;
   const match = text.match(resumeOfRegex);
@@ -222,7 +223,7 @@ function extractName(text: string): string | undefined {
     }
   }
 
-  return undefined;
+  return 'Unknown Name'; // Default value to ensure we always return a string
 }
 
 /**

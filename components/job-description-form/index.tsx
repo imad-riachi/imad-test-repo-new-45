@@ -1,1 +1,1 @@
-export { default } from './JobDescriptionForm';
+export { default, type JobDescriptionFormProps } from './JobDescriptionForm';

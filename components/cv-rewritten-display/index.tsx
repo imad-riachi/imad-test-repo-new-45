@@ -1,1 +1,1 @@
-export { default } from './CvRewrittenDisplay';
+export { default, type CvRewrittenDisplayProps } from './CvRewrittenDisplay';

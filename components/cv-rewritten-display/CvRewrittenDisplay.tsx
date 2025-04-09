@@ -15,19 +15,30 @@ import { Badge } from '../ui/badge';
 import { CheckCircle2, Info } from 'lucide-react';
 
 export interface CvRewrittenDisplayProps {
-  rewriteResponse: RewriteResponse;
+  /** The original CV data before rewriting */
+  originalCv: CvData;
+  /** The rewritten CV optimized for a job */
+  rewrittenCv: CvData;
+  /** Matching skills found in the job description */
+  matchingSkills?: string[];
+  /** Suggested improvements for the CV */
+  improvements?: string[];
+  /** Optional classname for styling */
   className?: string;
 }
 
+/**
+ * Component to display a rewritten CV with highlights of changes and matches
+ */
 const CvRewrittenDisplay: React.FC<CvRewrittenDisplayProps> = ({
-  rewriteResponse,
+  originalCv,
+  rewrittenCv,
+  matchingSkills = [],
+  improvements = [],
   className,
 }) => {
-  const { originalCv, rewrittenCv, jobDescription, matches, improvements } =
-    rewriteResponse;
-
   return (
-    <div className={cn('space-y-6', className)}>
+    <Card className={cn('space-y-6', className)}>
       <div>
         <h2 className='mb-2 text-2xl font-semibold'>CV Optimization Results</h2>
         <p className='text-muted-foreground'>
@@ -48,9 +59,9 @@ const CvRewrittenDisplay: React.FC<CvRewrittenDisplayProps> = ({
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {matches.skills.length > 0 ? (
+            {matchingSkills.length > 0 ? (
               <div className='flex flex-wrap gap-2'>
-                {matches.skills.map((skill, index) => (
+                {matchingSkills.map((skill, index) => (
                   <Badge key={index} variant='secondary'>
                     {skill}
                   </Badge>
@@ -194,6 +205,14 @@ const CvRewrittenDisplay: React.FC<CvRewrittenDisplayProps> = ({
                   Professional Summary
                 </h4>
                 <p className='text-sm'>{rewrittenCv.summary}</p>
+                {originalCv.summary !== rewrittenCv.summary && (
+                  <Badge
+                    variant='outline'
+                    className='mt-2 bg-green-50 text-green-700 dark:bg-green-900 dark:text-green-300'
+                  >
+                    Enhanced for job match
+                  </Badge>
+                )}
               </div>
             )}
 
@@ -208,11 +227,25 @@ const CvRewrittenDisplay: React.FC<CvRewrittenDisplayProps> = ({
                       {exp.company} | {exp.period}
                     </p>
                     <ul className='mt-2 list-disc space-y-1 pl-5'>
-                      {exp.responsibilities.map((resp, i) => (
-                        <li key={i} className='text-sm'>
-                          {resp}
-                        </li>
-                      ))}
+                      {exp.responsibilities.map((resp, i) => {
+                        const originalResp =
+                          originalCv.workExperience[index]?.responsibilities[i];
+                        const isModified = originalResp !== resp;
+
+                        return (
+                          <li key={i} className='text-sm'>
+                            {resp}
+                            {isModified && (
+                              <Badge
+                                variant='outline'
+                                className='ml-2 bg-green-50 text-green-700 dark:bg-green-900 dark:text-green-300'
+                              >
+                                Enhanced
+                              </Badge>
+                            )}
+                          </li>
+                        );
+                      })}
                     </ul>
                   </div>
                 ))}
@@ -225,15 +258,16 @@ const CvRewrittenDisplay: React.FC<CvRewrittenDisplayProps> = ({
                 <h4 className='mb-2 text-lg font-semibold'>Skills</h4>
                 <div className='flex flex-wrap gap-2'>
                   {rewrittenCv.skills.map((skill, index) => {
-                    const isMatched = matches.skills.includes(skill.name);
+                    const isMatch = matchingSkills.includes(skill.name);
+
                     return (
                       <Badge
                         key={index}
-                        variant={isMatched ? 'default' : 'outline'}
-                        className={isMatched ? 'bg-green-600' : ''}
+                        variant={isMatch ? 'default' : 'outline'}
+                        className={isMatch ? 'bg-primary' : ''}
                       >
                         {skill.name}
-                        {skill.level && ` (${skill.level})`}
+                        {skill.level && ` - ${skill.level}`}
                       </Badge>
                     );
                   })}
@@ -253,7 +287,7 @@ const CvRewrittenDisplay: React.FC<CvRewrittenDisplayProps> = ({
           <p className='text-sm whitespace-pre-line'>{jobDescription}</p>
         </CardContent>
       </Card>
-    </div>
+    </Card>
   );
 };
 

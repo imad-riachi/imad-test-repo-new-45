@@ -1,140 +1,130 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import { userEvent, within } from '@storybook/testing-library';
+import { expect } from '@storybook/jest';
 import JobDescriptionForm from './JobDescriptionForm';
 
+// Sample CV data for testing
+const mockCvData = {
+  name: 'John Doe',
+  contactInfo: {
+    email: 'john.doe@example.com',
+    phone: '555-123-4567',
+  },
+  summary:
+    'Experienced software developer with skills in JavaScript and React.',
+  workExperience: [
+    {
+      company: 'Tech Company',
+      position: 'Frontend Developer',
+      period: '2020-Present',
+      responsibilities: [
+        'Developed web applications using React',
+        'Worked with a team of 5 developers',
+        'Improved website performance',
+      ],
+    },
+  ],
+  education: [
+    {
+      institution: 'University',
+      degree: 'Computer Science',
+      year: '2019',
+    },
+  ],
+  skills: [{ name: 'JavaScript' }, { name: 'React' }, { name: 'HTML/CSS' }],
+};
+
+/**
+ * JobDescriptionForm component allows users to enter a job description
+ * that will be used to optimize their CV for a specific job application
+ */
 const meta: Meta<typeof JobDescriptionForm> = {
   title: 'Components/JobDescriptionForm',
   component: JobDescriptionForm,
   parameters: {
     layout: 'centered',
   },
-  tags: ['autodocs'],
+  args: {
+    cvData: mockCvData,
+    onRewriteComplete: (data) => console.log('CV rewritten:', data),
+    onRewriteError: (message) => console.error('Error:', message),
+  },
   argTypes: {
-    onRewriteComplete: { action: 'CV rewritten' },
-    onRewriteError: { action: 'error occurred' },
+    onRewriteComplete: { action: 'rewriteComplete' },
+    onRewriteError: { action: 'rewriteError' },
   },
 };
 
 export default meta;
 type Story = StoryObj<typeof JobDescriptionForm>;
 
-// Sample CV data for the stories
-const sampleCvData = {
-  name: 'John Doe',
-  contactInfo: {
-    email: 'john.doe@example.com',
-    phone: '+1 123-456-7890',
-    linkedin: 'linkedin.com/in/johndoe',
-  },
-  summary:
-    'Experienced software engineer with 5+ years of expertise in web development and cloud technologies.',
-  workExperience: [
-    {
-      company: 'Tech Solutions Inc.',
-      position: 'Senior Developer',
-      period: '2020-Present',
-      responsibilities: [
-        'Developed scalable web applications using React and Node.js',
-        'Led a team of 5 developers for multiple projects',
-        'Improved application performance by 40%',
-      ],
-    },
-    {
-      company: 'WebDev Company',
-      position: 'Frontend Developer',
-      period: '2018-2020',
-      responsibilities: [
-        'Built responsive UIs using modern JavaScript frameworks',
-        'Collaborated with designers to implement pixel-perfect interfaces',
-        'Participated in code reviews and mentored junior developers',
-      ],
-    },
-  ],
-  education: [
-    {
-      institution: 'University of Technology',
-      degree: 'Bachelor of Science in Computer Science',
-      year: '2018',
-    },
-  ],
-  skills: [
-    { name: 'JavaScript', level: 'Expert' },
-    { name: 'React', level: 'Advanced' },
-    { name: 'Node.js', level: 'Intermediate' },
-    { name: 'TypeScript', level: 'Advanced' },
-    { name: 'HTML/CSS', level: 'Expert' },
-  ],
-  languages: ['English', 'Spanish'],
-};
+/**
+ * Default state of the JobDescriptionForm
+ */
+export const Default: Story = {};
 
-// Default story
-export const Default: Story = {
-  args: {
-    cvData: sampleCvData,
-    className: 'max-w-lg',
-  },
-};
-
-// Empty state
-export const Empty: Story = {
-  args: {
-    cvData: {
-      name: '',
-      contactInfo: {},
-      summary: '',
-      workExperience: [],
-      education: [],
-      skills: [],
-    },
-    className: 'max-w-lg',
-  },
-};
-
-// Submitting state
-export const Submitting: Story = {
-  args: {
-    cvData: sampleCvData,
-    className: 'max-w-lg',
-  },
-  render: (args) => {
-    return (
-      <div className='max-w-lg'>
-        <JobDescriptionForm {...args} />
-        <div className='bg-muted mt-4 rounded border p-4'>
-          <p className='text-sm'>
-            This story simulates the form in its submitting state. In the actual
-            component, this state would be triggered when clicking the submit
-            button.
-          </p>
-        </div>
-      </div>
-    );
-  },
+/**
+ * Form with validation errors when submitting with empty input
+ */
+export const ValidationError: Story = {
   play: async ({ canvasElement }) => {
-    // A mock job description for the story
-    const jobDescription = `
-      We are looking for a skilled Frontend Developer with expertise in React and TypeScript.
-      The ideal candidate will have 3+ years of experience with modern JavaScript frameworks
-      and a solid understanding of web performance optimization. Knowledge of Node.js is a plus.
-    `;
+    const canvas = within(canvasElement);
 
-    // Find the textarea and button elements
-    const textarea = canvasElement.querySelector(
-      'textarea',
-    ) as HTMLTextAreaElement;
-    const button = canvasElement.querySelector(
-      'button[type="submit"]',
-    ) as HTMLButtonElement;
+    // Find and click the submit button
+    const submitButton = canvas.getByRole('button', { name: /optimize/i });
+    await userEvent.click(submitButton);
 
-    // Set the textarea value
-    if (textarea) {
-      textarea.value = jobDescription;
-      textarea.dispatchEvent(new Event('change', { bubbles: true }));
-    }
+    // Check if error message appears
+    const errorMessage = await canvas.findByText(
+      /please enter a job description/i,
+    );
+    expect(errorMessage).toBeInTheDocument();
+  },
+};
 
-    // Disable the button to simulate the submitting state
-    if (button) {
-      button.disabled = true;
-      button.textContent = 'Optimizing CV...';
-    }
+/**
+ * Form with validation errors when submitting with too few words
+ */
+export const ShortDescription: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    // Type a short description
+    const textarea = canvas.getByRole('textbox');
+    await userEvent.type(textarea, 'This is too short.');
+
+    // Click the submit button
+    const submitButton = canvas.getByRole('button', { name: /optimize/i });
+    await userEvent.click(submitButton);
+
+    // Check if error message appears
+    const errorMessage = await canvas.findByText(
+      /more detailed job description/i,
+    );
+    expect(errorMessage).toBeInTheDocument();
+  },
+};
+
+/**
+ * Form with a valid job description
+ */
+export const ValidInput: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    // Type a valid job description
+    const textarea = canvas.getByRole('textbox');
+    await userEvent.type(
+      textarea,
+      'We are looking for a skilled frontend developer with expertise in React, TypeScript, and modern JavaScript frameworks. The ideal candidate will have experience building responsive web applications and working with REST APIs.',
+    );
+
+    // Check if word count is displayed
+    const wordCount = await canvas.findByText(/\d+ words/);
+    expect(wordCount).toBeInTheDocument();
+
+    // Submit button should be enabled
+    const submitButton = canvas.getByRole('button', { name: /optimize/i });
+    expect(submitButton).not.toBeDisabled();
   },
 };
