@@ -94,10 +94,10 @@ Implement functionality to extract content from the uploaded CV file and convert
   - Extracts relevant text content.
   - Converts the extracted text into a structured JSON format (e.g., keys for name, contact info, work experience, education).
 - **Acceptance Criteria:**
-  - [ ] Service/module is created for text extraction from supported file types.
-  - [ ] Extracted data is properly formatted as JSON.
-  - [ ] Unit tests cover extraction logic using sample files of each type.
-  - [ ] Inline documentation is provided.
+  - [x] Service/module is created for text extraction from supported file types.
+  - [x] Extracted data is properly formatted as JSON.
+  - [x] Unit tests cover extraction logic using sample files of each type.
+  - [x] Inline documentation is provided.
 
 ---
 
@@ -109,11 +109,11 @@ Implement functionality to extract content from the uploaded CV file and convert
   - Call the data extraction service post-upload.
   - Store or return the extracted JSON data representing the CV.
 - **Acceptance Criteria:**
-  - [ ] API endpoint calls the data extraction service post file upload.
-  - [ ] Correct JSON structure is stored/returned.
-  - [ ] Integration tests verify correct JSON output for each supported file type.
-  - [ ] API documentation is updated with the JSON schema.
-  - [ ] All temporary/mock data is cleaned up.
+  - [x] API endpoint calls the data extraction service post file upload.
+  - [x] Correct JSON structure is stored/returned.
+  - [x] Integration tests verify correct JSON output for each supported file type.
+  - [x] API documentation is updated with the JSON schema.
+  - [x] All temporary/mock data is cleaned up.
 
 ---
 
@@ -125,10 +125,10 @@ Implement functionality to extract content from the uploaded CV file and convert
   - A preview of the JSON data is displayed.
   - The preview enables users (or QA) to verify that the extraction works correctly.
 - **Acceptance Criteria:**
-  - [ ] Dashboard receives and renders the extracted JSON data.
-  - [ ] UI displays a clear summary of the extracted CV content.
-  - [ ] Updated Storybook story simulates various JSON responses.
-  - [ ] Unit tests validate component behavior with different JSON inputs.
+  - [x] Dashboard receives and renders the extracted JSON data.
+  - [x] UI displays a clear summary of the extracted CV content.
+  - [x] Updated Storybook story simulates various JSON responses.
+  - [x] Unit tests validate component behavior with different JSON inputs.
 
 ---
 
@@ -163,10 +163,10 @@ Introduce the job description input functionality and integrate with an LLM (Lan
   - Supports validation (non-empty input) with error messages.
   - Adheres to design guidelines (Tailwind CSS, dark/light mode).
 - **Acceptance Criteria:**
-  - [ ] A text area form for job description input is implemented.
-  - [ ] Form includes validation with user feedback.
-  - [ ] Storybook story is provided for the component.
-  - [ ] Unit tests cover validation and UI behavior.
+  - [x] A text area form for job description input is implemented.
+  - [x] Form includes validation with user feedback.
+  - [x] Storybook story is provided for the component.
+  - [x] Unit tests cover validation and UI behavior.
 
 ---
 
@@ -179,11 +179,11 @@ Introduce the job description input functionality and integrate with an LLM (Lan
   - Prepares a payload for the LLM service.
   - Either simulates the LLM response or integrates with a third-party service to perform CV rewriting.
 - **Acceptance Criteria:**
-  - [ ] Endpoint available at `POST /api/cv/rewrite` accepting CV JSON and job description.
-  - [ ] Endpoint calls an LLM service (or mock service) and returns the rewritten CV.
-  - [ ] Unit tests cover typical use cases and error handling.
-  - [ ] Endpoint is fully documented (request/response formats).
-  - [ ] Temporary/mock data is cleaned up.
+  - [x] Endpoint available at `POST /api/cv/rewrite` accepting CV JSON and job description.
+  - [x] Endpoint calls an LLM service (or mock service) and returns the rewritten CV.
+  - [x] Unit tests cover typical use cases and error handling.
+  - [x] Endpoint is fully documented (request/response formats).
+  - [x] Temporary/mock data is cleaned up.
 
 ---
 
@@ -196,11 +196,11 @@ Introduce the job description input functionality and integrate with an LLM (Lan
   - The response (rewritten CV) is displayed in a preview panel on the dashboard.
   - Proper error handling and loading states are implemented.
 - **Acceptance Criteria:**
-  - [ ] Job description form triggers the API call to `/api/cv/rewrite` on submit.
-  - [ ] The rewritten CV is rendered in a preview section.
-  - [ ] Both loading and error states are well-handled.
-  - [ ] Unit tests verify proper API integration.
-  - [ ] Storybook stories simulate API responses.
+  - [x] Job description form triggers the API call to `/api/cv/rewrite` on submit.
+  - [x] The rewritten CV is rendered in a preview section.
+  - [x] Both loading and error states are well-handled.
+  - [x] Unit tests verify proper API integration.
+  - [x] Storybook stories simulate API responses.
 
 ---
 
@@ -241,11 +241,11 @@ Develop the final user interactions including:
   - Holds changes in the component state until saved.
   - Adheres to the company's branding and Tailwind CSS guidelines (responsive, dark/light mode).
 - **Acceptance Criteria:**
-  - [ ] A component is created to display the rewritten CV.
-  - [ ] Inline editing functionality is available.
-  - [ ] Changes persist correctly in component state until final save.
-  - [ ] A Storybook story demonstrates the component states.
-  - [ ] Unit tests cover both editing and save operations.
+  - [x] A component is created to display the rewritten CV.
+  - [x] Inline editing functionality is available.
+  - [x] Changes persist correctly in component state until final save.
+  - [x] A Storybook story demonstrates the component states.
+  - [x] Unit tests cover both editing and save operations.
 
 ---
 
@@ -258,11 +258,11 @@ Develop the final user interactions including:
   - Allow users to download the final CV in **PDF** format.
   - Utilize popular libraries (e.g., Markdown converter, PDF generation) to streamline development.
 - **Acceptance Criteria:**
-  - [ ] Markdown download option is implemented and functional.
-  - [ ] PDF download option is implemented and functional.
-  - [ ] Files maintain the styling as shown in the dashboard.
-  - [ ] Unit tests validate file generation and download processes.
-  - [ ] Storybook is updated with download component scenarios.
+  - [x] Markdown download option is implemented and functional.
+  - [x] PDF download option is implemented and functional.
+  - [x] Files maintain the styling as shown in the dashboard.
+  - [x] Unit tests validate file generation and download processes.
+  - [x] Storybook is updated with download component scenarios.
 
 ---
 

@@ -1,111 +1,350 @@
 'use client';
 
-import { useState } from 'react';
-import CvUploadForm from '@/components/cv-upload-form';
-import JobDescriptionForm from '@/components/job-description-form';
-import CvRewrittenDisplay from '@/components/cv-rewritten-display';
+import React, { useState } from 'react';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import CvUploadForm from '@/components/cv-upload-form/CvUploadForm';
+import { ExtractedDataDisplay } from '@/components/cv-upload-form/ExtractedDataDisplay';
+import JobDescriptionForm from '@/components/job-description-form/JobDescriptionForm';
+import CvEditablePreview from '@/components/cv-editable-preview';
+import { downloadCvAsMarkdown, downloadCvAsPdf } from '@/lib/cv-export';
 import { CvData } from '@/lib/cv-parser/cv-parser';
 import { RewriteResponse } from '@/lib/cv-rewriter/rewriter';
+import { CheckCircle2, Info } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 
-export default function DashboardPage() {
-  const [extractedCvData, setExtractedCvData] = useState<CvData | null>(null);
+// Utility function to convert CvData from parser format to extractor format
+const convertCvDataForExport = (cv: CvData) => {
+  return {
+    personalInfo: {
+      name: cv.name,
+      email: cv.contactInfo.email,
+      phone: cv.contactInfo.phone || '',
+      location: cv.contactInfo.location || '',
+      linkedIn: cv.contactInfo.linkedin,
+      portfolio: cv.contactInfo.website,
+    },
+    summary: cv.summary || '',
+    workExperience: cv.workExperience.map((job) => ({
+      company: job.company,
+      position: job.position,
+      startDate: job.period.split('-')[0].trim(),
+      endDate:
+        job.period.split('-').length > 1
+          ? job.period.split('-')[1].trim()
+          : 'Present',
+      description: job.responsibilities.join('\n'),
+      achievements: [],
+    })),
+    education: cv.education.map((edu) => ({
+      institution: edu.institution,
+      degree: edu.degree,
+      field: edu.fieldOfStudy || '',
+      graduationDate: edu.year,
+      gpa: '',
+    })),
+    skills: {
+      technical: cv.skills.map((skill) => skill.name),
+      languages: cv.languages?.map((lang) => lang.name) || [],
+    },
+  };
+};
+
+export default function Dashboard() {
+  // State for tracking the current step in the workflow
+  const [currentStep, setCurrentStep] = useState<
+    'upload' | 'optimize' | 'results'
+  >('upload');
+
+  // State for storing the extracted CV data
+  const [extractedCV, setExtractedCV] = useState<CvData | null>(null);
+
+  // State for storing the rewritten CV data
   const [rewriteResponse, setRewriteResponse] =
     useState<RewriteResponse | null>(null);
 
-  const handleUploadComplete = (fileData: {
-    name: string;
-    type: string;
-    url: string;
-    data?: any;
-  }) => {
-    if (fileData.data) {
-      setExtractedCvData(fileData.data);
-      // Reset rewrite response when new CV is uploaded
-      setRewriteResponse(null);
+  // Handle successful CV extraction
+  const handleCvExtracted = (cvData: CvData) => {
+    setExtractedCV(cvData);
+    setCurrentStep('optimize');
+  };
+
+  // Handle successful CV rewrite
+  const handleRewriteComplete = (response: RewriteResponse) => {
+    setRewriteResponse(response);
+    setCurrentStep('results');
+  };
+
+  // Handle CV rewrite error
+  const handleRewriteError = (message: string) => {
+    console.error('Error rewriting CV:', message);
+    // You could add a toast notification here
+  };
+
+  // Handle PDF download
+  const handleGeneratePdf = async (cv: CvData) => {
+    try {
+      // For PDF we use the browser print functionality directly
+      // This doesn't require the CvData conversion since it prints the current view
+      downloadCvAsPdf('optimized-cv.pdf');
+      return Promise.resolve();
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      return Promise.reject(error);
     }
   };
 
-  const handleRewriteComplete = (response: RewriteResponse) => {
-    setRewriteResponse(response);
+  // Handle Markdown download
+  const handleGenerateMarkdown = async (cv: CvData) => {
+    try {
+      // Convert CvData from parser format to extractor format
+      const convertedCv = convertCvDataForExport(cv);
+      downloadCvAsMarkdown(convertedCv, 'optimized-cv.md');
+      return Promise.resolve();
+    } catch (error) {
+      console.error('Error generating Markdown:', error);
+      return Promise.reject(error);
+    }
+  };
+
+  // Handle saving CV edits
+  const handleSaveCvEdits = (updatedCv: CvData) => {
+    // In a real application, you might want to save the updated CV to the backend
+    if (rewriteResponse) {
+      setRewriteResponse({
+        ...rewriteResponse,
+        rewrittenCv: updatedCv,
+      });
+    }
+  };
+
+  // Handle going back to a previous step
+  const handleBack = () => {
+    if (currentStep === 'results') {
+      setCurrentStep('optimize');
+    } else if (currentStep === 'optimize') {
+      setCurrentStep('upload');
+      setExtractedCV(null);
+    }
+  };
+
+  // Restart the entire process
+  const handleReset = () => {
+    setCurrentStep('upload');
+    setExtractedCV(null);
+    setRewriteResponse(null);
   };
 
   return (
-    <div className='mx-auto max-w-7xl px-4 sm:px-6 lg:px-8'>
-      <div className='space-y-12'>
-        {/* Welcome Section */}
-        <div className='max-w-3xl space-y-4'>
-          <h1 className='text-4xl font-bold tracking-tight sm:text-5xl'>
-            CV Assistant
-          </h1>
-          <p className='text-muted-foreground text-lg'>
-            Upload your CV and let&apos;s optimize it for job applications.
-          </p>
-        </div>
-
-        {/* Step 1: CV Upload Section */}
-        {!extractedCvData && (
-          <div className='max-w-xl space-y-4'>
-            <div className='bg-card rounded-lg border p-6 shadow-sm'>
-              <h2 className='mb-4 text-2xl font-semibold'>
-                Step 1: Upload Your CV
-              </h2>
-              <CvUploadForm
-                onUploadComplete={handleUploadComplete}
-                extractData={true}
-              />
-            </div>
-          </div>
-        )}
-
-        {/* Step 2: Job Description Form */}
-        {extractedCvData && !rewriteResponse && (
-          <div className='max-w-xl space-y-4'>
-            <div className='bg-card rounded-lg border p-6 shadow-sm'>
-              <h2 className='mb-4 text-2xl font-semibold'>
-                Step 2: Enter Job Description
-              </h2>
-              <p className='text-muted-foreground mb-6'>
-                Paste the job description to optimize your CV for this specific
-                role.
-              </p>
-              <JobDescriptionForm
-                cvData={extractedCvData}
-                onRewriteComplete={handleRewriteComplete}
-              />
-            </div>
-          </div>
-        )}
-
-        {/* Step 3: Rewritten CV Display */}
-        {rewriteResponse && (
-          <div className='space-y-6'>
-            <div className='bg-card rounded-lg border p-6 shadow-sm'>
-              <h2 className='mb-4 text-2xl font-semibold'>
-                Step 3: Review Your Optimized CV
-              </h2>
-              <CvRewrittenDisplay rewriteResponse={rewriteResponse} />
-            </div>
-
-            <div className='flex gap-4'>
-              <button
-                className='bg-primary text-primary-foreground hover:bg-primary/90 rounded-md px-4 py-2 text-sm font-medium'
-                onClick={() => setRewriteResponse(null)}
-              >
-                Try Another Job Description
-              </button>
-              <button
-                className='hover:bg-secondary hover:text-secondary-foreground border-input rounded-md border px-4 py-2 text-sm font-medium'
-                onClick={() => {
-                  setExtractedCvData(null);
-                  setRewriteResponse(null);
-                }}
-              >
-                Upload a Different CV
-              </button>
-            </div>
-          </div>
-        )}
+    <div className='container mx-auto py-10'>
+      <div className='mb-8 flex flex-col'>
+        <h1 className='mb-2 text-3xl font-bold'>CV Optimizer</h1>
+        <p className='text-muted-foreground'>
+          Enhance your CV for specific job descriptions using AI
+        </p>
       </div>
+
+      {/* Workflow Steps */}
+      <div className='mb-8'>
+        <div className='flex items-center justify-between'>
+          <div className='flex items-center gap-2'>
+            <div
+              className={`rounded-full px-3 py-1 text-sm font-medium ${
+                currentStep === 'upload'
+                  ? 'bg-primary text-primary-foreground'
+                  : 'bg-muted text-muted-foreground'
+              }`}
+            >
+              1. Upload CV
+            </div>
+            <div className='bg-border h-px w-5'></div>
+            <div
+              className={`rounded-full px-3 py-1 text-sm font-medium ${
+                currentStep === 'optimize'
+                  ? 'bg-primary text-primary-foreground'
+                  : 'bg-muted text-muted-foreground'
+              }`}
+            >
+              2. Add Job Description
+            </div>
+            <div className='bg-border h-px w-5'></div>
+            <div
+              className={`rounded-full px-3 py-1 text-sm font-medium ${
+                currentStep === 'results'
+                  ? 'bg-primary text-primary-foreground'
+                  : 'bg-muted text-muted-foreground'
+              }`}
+            >
+              3. View Results
+            </div>
+          </div>
+
+          {currentStep !== 'upload' && (
+            <Button variant='ghost' onClick={handleBack}>
+              Back
+            </Button>
+          )}
+        </div>
+      </div>
+
+      {/* CV Upload Step */}
+      {currentStep === 'upload' && (
+        <div className='grid gap-6 md:grid-cols-2'>
+          <CvUploadForm
+            onUploadComplete={(fileData) => {
+              if (fileData.data) {
+                handleCvExtracted(fileData.data);
+              }
+            }}
+            extractData={true}
+          />
+
+          <Card>
+            <CardHeader>
+              <CardTitle>How it works</CardTitle>
+              <CardDescription>
+                Optimize your CV for each job application in 3 simple steps
+              </CardDescription>
+            </CardHeader>
+            <CardContent className='space-y-4'>
+              <div>
+                <h3 className='font-medium'>1. Upload your CV</h3>
+                <p className='text-muted-foreground text-sm'>
+                  Upload your existing CV in PDF, Word, or plain text format
+                </p>
+              </div>
+              <div>
+                <h3 className='font-medium'>2. Paste the job description</h3>
+                <p className='text-muted-foreground text-sm'>
+                  Provide the job description you&apos;re applying for
+                </p>
+              </div>
+              <div>
+                <h3 className='font-medium'>3. Get your optimized CV</h3>
+                <p className='text-muted-foreground text-sm'>
+                  Our AI will analyze your CV and tailor it to highlight
+                  relevant skills and experience
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* Job Description Step */}
+      {currentStep === 'optimize' && extractedCV && (
+        <div className='grid gap-6 md:grid-cols-2'>
+          <JobDescriptionForm
+            cvData={extractedCV}
+            onRewriteComplete={handleRewriteComplete}
+            onRewriteError={handleRewriteError}
+          />
+
+          <ExtractedDataDisplay
+            data={{
+              name: extractedCV.name,
+              email: extractedCV.contactInfo?.email || '',
+              phone: extractedCV.contactInfo?.phone || '',
+              linkedin: extractedCV.contactInfo?.linkedin || '',
+              summary: extractedCV.summary || '',
+              workExperience:
+                extractedCV.workExperience?.map((exp) => ({
+                  company: exp.company,
+                  position: exp.position,
+                  duration: exp.period || '',
+                  description: Array.isArray(exp.responsibilities)
+                    ? exp.responsibilities.join('\n')
+                    : '',
+                })) || [],
+              education:
+                extractedCV.education?.map((edu) => ({
+                  institution: edu.institution,
+                  degree: edu.degree,
+                  date: edu.year || '',
+                })) || [],
+              skills: extractedCV.skills?.map((skill) => skill.name) || [],
+            }}
+          />
+        </div>
+      )}
+
+      {/* Results Step */}
+      {currentStep === 'results' && rewriteResponse && (
+        <div className='space-y-6'>
+          <div className='grid gap-6 md:grid-cols-2'>
+            <Card>
+              <CardHeader>
+                <CardTitle className='flex items-center gap-2'>
+                  <CheckCircle2 className='h-5 w-5 text-green-500' />
+                  <span>Matching Skills</span>
+                </CardTitle>
+                <CardDescription>
+                  Skills in your CV that match the job requirements
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {rewriteResponse.matches.skills.length > 0 ? (
+                  <div className='flex flex-wrap gap-2'>
+                    {rewriteResponse.matches.skills.map((skill, index) => (
+                      <Badge key={index} variant='secondary'>
+                        {skill}
+                      </Badge>
+                    ))}
+                  </div>
+                ) : (
+                  <p className='text-muted-foreground text-sm'>
+                    No direct skill matches found.
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className='flex items-center gap-2'>
+                  <Info className='h-5 w-5 text-blue-500' />
+                  <span>Suggested Improvements</span>
+                </CardTitle>
+                <CardDescription>
+                  Ways to further improve your CV for this role
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {rewriteResponse.improvements.length > 0 ? (
+                  <ul className='list-disc space-y-1 pl-5'>
+                    {rewriteResponse.improvements.map((improvement, index) => (
+                      <li key={index} className='text-sm'>
+                        {improvement}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className='text-muted-foreground text-sm'>
+                    No additional improvements suggested.
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+
+          <CvEditablePreview
+            cvData={rewriteResponse.rewrittenCv}
+            onSave={handleSaveCvEdits}
+            onGeneratePdf={handleGeneratePdf}
+            onGenerateMarkdown={handleGenerateMarkdown}
+          />
+
+          <div className='flex justify-center'>
+            <Button onClick={handleReset}>Start New Optimization</Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
