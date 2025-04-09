@@ -7,6 +7,12 @@ import CVDisplay, { type CVData } from '@/components/cv-display';
 import MarkdownDownloadButton from '@/components/markdown-converter';
 import PDFDownloadButton from '@/components/pdf-converter';
 
+import { generatePDFFromCV, downloadPDF } from '@/lib/utils/pdf-generator';
+import {
+  convertCVToMarkdown,
+  downloadMarkdown,
+} from '@/lib/utils/markdown-converter';
+
 const ReviewPage = () => {
   const [rewrittenCV, setRewrittenCV] = useState<CVData | null>(null);
   const [jobDescription, setJobDescription] = useState<string>('');
@@ -65,8 +71,24 @@ const ReviewPage = () => {
         </div>
 
         <div className='flex flex-col gap-4 sm:flex-row sm:justify-end'>
-          <MarkdownDownloadButton cv={rewrittenCV} />
-          <PDFDownloadButton cv={rewrittenCV} />
+          <MarkdownDownloadButton
+            cv={rewrittenCV}
+            onMarkdownDownload={(data) => {
+              if (!data?.cv) return;
+
+              const markdown = convertCVToMarkdown(data.cv);
+              downloadMarkdown(markdown, data.filename);
+            }}
+          />
+          <PDFDownloadButton
+            cv={rewrittenCV}
+            onPDFDownload={(data) => {
+              if (!data?.cv) return;
+
+              const pdfBlob = generatePDFFromCV(data.cv);
+              downloadPDF(pdfBlob, data?.filename);
+            }}
+          />
         </div>
       </div>
     </div>

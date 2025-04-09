@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { userEvent, within, waitFor, expect } from '@storybook/test';
+import { userEvent, within, waitFor, expect, fn } from '@storybook/test';
 import JobDescriptionInput from './JobDescriptionInput';
 
 const meta: Meta<typeof JobDescriptionInput> = {
@@ -39,7 +39,7 @@ export const Loading: Story = {
 
 export const WithValidInput: Story = {
   args: {
-    onSubmit: async () => {},
+    onSubmit: fn(),
     isLoading: false,
     minLength: 50,
     maxLength: 5000,

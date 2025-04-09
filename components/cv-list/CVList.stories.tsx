@@ -106,10 +106,10 @@ export const SelectingFile: Story = {
 
     // Click on the first file
     const fileElement = canvas.getByText(sampleFiles[0].filename);
-    const fileRow = fileElement.closest('[class*="flex items-center"]');
+    const clickableArea = fileElement.closest('[class*="cursor-pointer"]');
 
-    if (fileRow) {
-      await userEvent.click(fileRow);
+    if (clickableArea) {
+      await userEvent.click(clickableArea);
 
       // Verify onSelect was called with the correct fileId
       expect(args.onSelect).toHaveBeenCalledWith(sampleFiles[0].fileId);
@@ -127,12 +127,24 @@ export const DeletingFile: Story = {
     const canvas = within(canvasElement);
 
     // Find all delete buttons (they have the trash icon)
-    const deleteButtons = canvas.getAllByRole('button');
+    const deleteButtons = canvas.getAllByRole('button', { name: 'Delete' });
 
-    // Click the first delete button
+    // Click the first delete button to open the dialog
     await userEvent.click(deleteButtons[0]);
 
-    // Verify onDelete was called with the correct id
-    expect(args.onDelete).toHaveBeenCalledWith(sampleFiles[0].id);
+    // Find and click the confirmation button in the dialog
+    const dialogContainer = document.querySelector(
+      '[role="alertdialog"]',
+    ) as HTMLElement;
+    if (dialogContainer) {
+      const dialogCanvas = within(dialogContainer);
+      const confirmButton = dialogCanvas.getByRole('button', {
+        name: /delete$/i,
+      });
+      await userEvent.click(confirmButton);
+
+      // Verify onDelete was called with the correct id
+      expect(args.onDelete).toHaveBeenCalledWith(sampleFiles[0].id);
+    }
   },
 };

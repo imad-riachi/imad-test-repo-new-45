@@ -1,14 +1,7 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
-import { vi } from 'vitest';
 import MarkdownDownloadButton from './MarkdownDownloadButton';
-import * as markdownConverter from '@/lib/utils/markdown-converter';
-
-// Mock the downloadMarkdown function to prevent actual downloads in tests
-const downloadMock = vi
-  .spyOn(markdownConverter, 'downloadMarkdown')
-  .mockImplementation(() => {});
 
 const meta: Meta<typeof MarkdownDownloadButton> = {
   component: MarkdownDownloadButton,
@@ -36,38 +29,43 @@ const sampleCV = {
 export const Default: Story = {
   args: {
     cv: sampleCV,
+    onMarkdownDownload: fn(),
   },
-  play: async ({ canvasElement, args }) => {
+  play: async ({ args, canvasElement }) => {
     const canvas = within(canvasElement);
 
-    // Find the download button
+    // Get the button and check if it's enabled
     const downloadButton = canvas.getByRole('button', {
-      name: /download cv as markdown/i,
+      name: /Download CV as Markdown/i,
     });
-    expect(downloadButton).toBeInTheDocument();
     expect(downloadButton).not.toBeDisabled();
 
-    // Click the button
+    // Click the button and verify the callback was called
     await userEvent.click(downloadButton);
-
-    // Verify the conversion and download functions were called
-    expect(markdownConverter.downloadMarkdown).toHaveBeenCalled();
+    expect(args.onMarkdownDownload).toHaveBeenCalledWith({
+      cv: sampleCV,
+      filename: 'optimized_cv.md',
+    });
   },
 };
 
 export const DisabledState: Story = {
   args: {
     cv: null,
+    onMarkdownDownload: fn(),
   },
-  play: async ({ canvasElement }) => {
+  play: async ({ args, canvasElement }) => {
     const canvas = within(canvasElement);
 
-    // Find the download button
+    // Get the button and check if it's disabled
     const downloadButton = canvas.getByRole('button', {
-      name: /download cv as markdown/i,
+      name: /Download CV as Markdown/i,
     });
-    expect(downloadButton).toBeInTheDocument();
     expect(downloadButton).toBeDisabled();
+
+    // Try to click the button (should have no effect)
+    await userEvent.click(downloadButton);
+    expect(args.onMarkdownDownload).not.toHaveBeenCalled();
   },
 };
 
@@ -75,14 +73,19 @@ export const CustomText: Story = {
   args: {
     cv: sampleCV,
     buttonText: 'Get Markdown',
+    onMarkdownDownload: fn(),
   },
-  play: async ({ canvasElement }) => {
+  play: async ({ args, canvasElement }) => {
     const canvas = within(canvasElement);
 
-    // Verify custom button text
+    // Check if the button has the custom text
     const downloadButton = canvas.getByRole('button', {
-      name: /download cv as markdown/i,
+      name: /Download CV as Markdown/i,
     });
     expect(downloadButton).toHaveTextContent('Get Markdown');
+
+    // Click the button and verify the callback was called
+    await userEvent.click(downloadButton);
+    expect(args.onMarkdownDownload).toHaveBeenCalled();
   },
 };

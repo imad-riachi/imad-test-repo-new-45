@@ -3,15 +3,6 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
 import { vi } from 'vitest';
 import PDFDownloadButton from './PDFDownloadButton';
-import * as pdfGenerator from '@/lib/utils/pdf-generator';
-
-// Mock the PDF generation and download functions
-const generateMock = vi
-  .spyOn(pdfGenerator, 'generatePDFFromCV')
-  .mockImplementation(() => new Blob([]));
-const downloadMock = vi
-  .spyOn(pdfGenerator, 'downloadPDF')
-  .mockImplementation(() => {});
 
 const meta: Meta<typeof PDFDownloadButton> = {
   component: PDFDownloadButton,
@@ -39,39 +30,48 @@ const sampleCV = {
 export const Default: Story = {
   args: {
     cv: sampleCV,
+    onPDFDownload: fn(),
   },
-  play: async ({ canvasElement }) => {
+  play: async ({ args, canvasElement }) => {
     const canvas = within(canvasElement);
 
-    // Find the download button
-    const downloadButton = canvas.getByRole('button', {
-      name: /download cv as pdf/i,
-    });
-    expect(downloadButton).toBeInTheDocument();
-    expect(downloadButton).not.toBeDisabled();
+    // Find the button
+    const button = canvas.getByRole('button', { name: /download cv as pdf/i });
+
+    // Verify button is enabled
+    expect(button).not.toBeDisabled();
 
     // Click the button
-    await userEvent.click(downloadButton);
+    await userEvent.click(button);
 
-    // Verify the PDF generation and download functions were called
-    expect(pdfGenerator.generatePDFFromCV).toHaveBeenCalled();
-    expect(pdfGenerator.downloadPDF).toHaveBeenCalled();
+    // Verify the onPDFDownload callback was called with correct args
+    expect(args.onPDFDownload).toHaveBeenCalledTimes(1);
+    expect(args.onPDFDownload).toHaveBeenCalledWith({
+      cv: sampleCV,
+      filename: 'optimized_cv.pdf',
+    });
   },
 };
 
 export const DisabledState: Story = {
   args: {
     cv: null,
+    onPDFDownload: fn(),
   },
-  play: async ({ canvasElement }) => {
+  play: async ({ args, canvasElement }) => {
     const canvas = within(canvasElement);
 
-    // Find the download button
-    const downloadButton = canvas.getByRole('button', {
-      name: /download cv as pdf/i,
-    });
-    expect(downloadButton).toBeInTheDocument();
-    expect(downloadButton).toBeDisabled();
+    // Find the button
+    const button = canvas.getByRole('button', { name: /download cv as pdf/i });
+
+    // Verify button is disabled
+    expect(button).toBeDisabled();
+
+    // Try to click the button (should have no effect due to disabled state)
+    await userEvent.click(button);
+
+    // Verify the callback wasn't called
+    expect(args.onPDFDownload).not.toHaveBeenCalled();
   },
 };
 
@@ -79,14 +79,21 @@ export const CustomText: Story = {
   args: {
     cv: sampleCV,
     buttonText: 'Export PDF',
+    onPDFDownload: fn(),
   },
-  play: async ({ canvasElement }) => {
+  play: async ({ args, canvasElement }) => {
     const canvas = within(canvasElement);
 
-    // Verify custom button text
-    const downloadButton = canvas.getByRole('button', {
-      name: /download cv as pdf/i,
-    });
-    expect(downloadButton).toHaveTextContent('Export PDF');
+    // Find the button with custom text
+    const button = canvas.getByRole('button', { name: /download cv as pdf/i });
+
+    // Verify the button has custom text
+    expect(button).toHaveTextContent('Export PDF');
+
+    // Click the button
+    await userEvent.click(button);
+
+    // Verify the callback was called
+    expect(args.onPDFDownload).toHaveBeenCalledTimes(1);
   },
 };
