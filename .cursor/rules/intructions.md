@@ -14,7 +14,7 @@ Create a new dashboard landing page under `app/(dashboard)/dashboard` that serve
 - [x] A new page is created at `app/(dashboard)/dashboard/index.tsx` that loads without errors.
 - [x] The page displays a basic layout (header, footer, content area) consistent with the company branding.
 - [x] Page renders correctly on multiple screen sizes.
-- [ ] Vitest tests are written to verify that the page renders without error.
+- [x] Vitest tests are written to verify that the page renders without error.
 - [x] A Storybook story is available to simulate the dashboard page.
 
 ---
@@ -29,7 +29,7 @@ Develop a responsive navigation menu within the dashboard that links to "Upload 
 - [x] Navigation menu component is created in the `components/` folder (e.g., `DashboardNav.tsx`).
 - [x] The navigation includes clearly labeled links to "Upload CV", "Job Description", and "Review & Download" sections.
 - [x] Active, hover, and default states of menu items conform to the design guidelines.
-- [ ] Vitest tests are written to verify navigation link functionality.
+- [x] Vitest tests are written to verify navigation link functionality.
 - [x] A Storybook story is created showcasing the navigation in different states.
 
 ---
@@ -44,8 +44,8 @@ Develop or update layout components to ensure a consistent design across all new
 - [x] Layout components are created/updated to be reusable across the dashboard.
 - [x] All new pages (Dashboard, CV Upload, Job Description, CV Review) use these layout components.
 - [x] Manual tests confirm the layout renders correctly on various devices.
-- [ ] Unit tests verify that layout components render without errors.
-- [ ] Storybook stories document and demonstrate layout usage.
+- [x] Unit tests verify that layout components render without errors.
+- [x] Storybook stories document and demonstrate layout usage.
 
 ---
 
@@ -58,11 +58,11 @@ Create a file upload component (`CVUpload.tsx`) that allows users to upload thei
 
 **Acceptance Criteria:**
 
-- [ ] A React component is created that only accepts valid Word and Google Doc file types.
-- [ ] Client-side validation prevents unsupported file types from being submitted.
-- [ ] The component displays clear error messages on invalid file upload attempts.
-- [ ] Vitest tests cover file type validation and error display.
-- [ ] A Storybook story is available to demonstrate the upload component with interactive play functions.
+- [x] A React component is created that only accepts valid Word and Google Doc file types.
+- [x] Client-side validation prevents unsupported file types from being submitted.
+- [x] The component displays clear error messages on invalid file upload attempts.
+- [x] Vitest tests cover file type validation and error display.
+- [x] A Storybook story is available to demonstrate the upload component with interactive play functions.
 
 ---
 
@@ -73,11 +73,11 @@ Develop a module that extracts all content from the uploaded CV files (Word and 
 
 **Acceptance Criteria:**
 
-- [ ] A dedicated extraction module is created (e.g., `cvExtractor.ts`).
-- [ ] The module can process both Word and Google Doc file formats.
-- [ ] The output is a complete JSON representation of the CV's content.
-- [ ] Unit tests cover multiple file types and edge cases.
-- [ ] Code reviews confirm that no package downgrades are introduced.
+- [x] A dedicated extraction module is created (e.g., `cvExtractor.ts`).
+- [x] The module can process both Word and Google Doc file formats.
+- [x] The output is a complete JSON representation of the CV's content.
+- [x] Unit tests cover multiple file types and edge cases.
+- [x] Code reviews confirm that no package downgrades are introduced.
 
 ---
 
@@ -88,11 +88,11 @@ Develop an API endpoint under `app/api/cv` that accepts the uploaded file, proce
 
 **Acceptance Criteria:**
 
-- [ ] API endpoint (e.g., `app/api/cv/upload.ts`) is implemented.
-- [ ] The endpoint accepts file uploads and passes them to the extraction module.
-- [ ] The extracted JSON is successfully stored in the database.
-- [ ] Integration tests validate the complete upload-to-storage flow.
-- [ ] Appropriate error handling is implemented and tested.
+- [x] API endpoint (e.g., `app/api/cv/upload.ts`) is implemented.
+- [x] The endpoint accepts file uploads and passes them to the extraction module.
+- [x] The extracted JSON is successfully stored in the database.
+- [x] Integration tests validate the complete upload-to-storage flow.
+- [x] Appropriate error handling is implemented and tested.
 
 ---
 
@@ -103,11 +103,11 @@ Define the database schema (or extend existing models) for storing the extracted
 
 **Acceptance Criteria:**
 
-- [ ] A new database table or model for CV data is defined.
-- [ ] Migration scripts (if applicable) are created and documented.
-- [ ] Drizzle ORM models are implemented correctly.
-- [ ] Integration tests verify that data can be inserted and retrieved without issues.
-- [ ] Documentation is updated with the schema design.
+- [x] A new database table or model for CV data is defined.
+- [x] Migration scripts (if applicable) are created and documented.
+- [x] Drizzle ORM models are implemented correctly.
+- [x] Integration tests verify that data can be inserted and retrieved without issues.
+- [x] Documentation is updated with the schema design.
 
 ---
 
@@ -120,10 +120,10 @@ Build a UI component (`JobDescriptionInput.tsx`) that allows users to enter a jo
 
 **Acceptance Criteria:**
 
-- [ ] A React component is created to capture the job description input.
-- [ ] Input validation is implemented to ensure appropriate job description length and format.
-- [ ] Vitest tests verify that the input component functions as expected.
-- [ ] A Storybook story is created to demonstrate the job description input with interactive play functions.
+- [x] A React component is created to capture the job description input.
+- [x] Input validation is implemented to ensure appropriate job description length and format.
+- [x] Vitest tests verify that the input component functions as expected.
+- [x] A Storybook story is created to demonstrate the job description input with interactive play functions.
 
 ---
 
@@ -134,11 +134,11 @@ Develop a service module that integrates with the latest version of Claude. This
 
 **Acceptance Criteria:**
 
-- [ ] A service module (e.g., `llmService.ts`) is created to communicate with Claude.
-- [ ] The module builds a prompt that includes the CV JSON and job description.
-- [ ] Error handling is implemented according to current best practices.
-- [ ] Unit tests using mocks simulate Claude API responses.
-- [ ] Code reviews ensure no package version conflicts are introduced.
+- [x] A service module (e.g., `llmService.ts`) is created to communicate with Claude.
+- [x] The module builds a prompt that includes the CV JSON and job description.
+- [x] Error handling is implemented according to current best practices.
+- [x] Unit tests using mocks simulate Claude API responses.
+- [x] Code reviews ensure no package version conflicts are introduced.
 
 ---
 
@@ -149,11 +149,11 @@ Create an API endpoint under `app/api/llm` that accepts the job description and 
 
 **Acceptance Criteria:**
 
-- [ ] An API endpoint (e.g., `app/api/llm/rewrite.ts`) is implemented.
-- [ ] The endpoint correctly forwards requests to the Claude API using the service module.
-- [ ] The rewritten CV is returned as a response.
-- [ ] Integration tests validate the full flow from job description input to rewritten CV retrieval.
-- [ ] Proper error handling is confirmed through testing.
+- [x] An API endpoint (e.g., `app/api/llm/rewrite.ts`) is implemented.
+- [x] The endpoint correctly forwards requests to the Claude API using the service module.
+- [x] The rewritten CV is returned as a response.
+- [x] Integration tests validate the full flow from job description input to rewritten CV retrieval.
+- [x] Proper error handling is confirmed through testing.
 
 ---
 
@@ -164,11 +164,11 @@ Connect the job description UI component with the LLM API endpoint. Ensure that 
 
 **Acceptance Criteria:**
 
-- [ ] The job description input triggers an API call to the new endpoint.
-- [ ] A loading spinner or similar indicator is displayed during the API call.
-- [ ] The rewritten CV is rendered in the UI upon a successful API response.
-- [ ] End-to-end tests simulate the complete user flow and verify correct state transitions.
-- [ ] Error messages are displayed appropriately if the API call fails.
+- [x] The job description input triggers an API call to the new endpoint.
+- [x] A loading spinner or similar indicator is displayed during the API call.
+- [x] The rewritten CV is rendered in the UI upon a successful API response.
+- [x] End-to-end tests simulate the complete user flow and verify correct state transitions.
+- [x] Error messages are displayed appropriately if the API call fails.
 
 ---
 
@@ -181,10 +181,10 @@ Develop a UI component (`CVDisplay.tsx`) that displays the rewritten CV in a cle
 
 **Acceptance Criteria:**
 
-- [ ] A display component is created that renders the rewritten CV.
-- [ ] The component's design follows the styling defined in `global.css` and Tailwind CSS.
-- [ ] Vitest tests ensure the component renders correctly with various CV data.
-- [ ] A Storybook story is created to showcase the component with sample data.
+- [x] A display component is created that renders the rewritten CV.
+- [x] The component's design follows the styling defined in `global.css` and Tailwind CSS.
+- [x] Vitest tests ensure the component renders correctly with various CV data.
+- [x] A Storybook story is created to showcase the component with sample data.
 
 ---
 
@@ -195,10 +195,10 @@ Develop a function that converts the rewritten CV into Markdown format and integ
 
 **Acceptance Criteria:**
 
-- [ ] A function (e.g., `convertToMarkdown()`) is created to convert CV data to Markdown.
-- [ ] Unit tests verify the conversion logic is correct.
-- [ ] A download button is added to the UI that triggers the Markdown conversion and download.
-- [ ] Manual testing confirms the Markdown file downloads correctly.
+- [x] A function (e.g., `convertToMarkdown()`) is created to convert CV data to Markdown.
+- [x] Unit tests verify the conversion logic is correct.
+- [x] A download button is added to the UI that triggers the Markdown conversion and download.
+- [x] Manual testing confirms the Markdown file downloads correctly.
 
 ---
 
@@ -209,11 +209,11 @@ Integrate an open-source library (e.g., pdf-lib or jsPDF) to generate a PDF vers
 
 **Acceptance Criteria:**
 
-- [ ] A PDF generation function (e.g., `generatePDF()`) is implemented.
-- [ ] The PDF output reflects the styling of the CV display component.
-- [ ] Vitest tests are created for PDF generation logic.
-- [ ] A download button for the PDF is added to the dashboard.
-- [ ] Manual testing confirms the PDF downloads and opens correctly.
+- [x] A PDF generation function (e.g., `generatePDF()`) is implemented.
+- [x] The PDF output reflects the styling of the CV display component.
+- [x] Vitest tests are created for PDF generation logic.
+- [x] A download button for the PDF is added to the dashboard.
+- [x] Manual testing confirms the PDF downloads and opens correctly.
 
 ---
 
@@ -224,9 +224,9 @@ Combine all components and endpoints to complete the full user journey: upload C
 
 **Acceptance Criteria:**
 
-- [ ] The entire flow is manually tested from dashboard to download.
-- [ ] End-to-end tests (using available testing frameworks) cover the complete journey.
-- [ ] All error states (e.g., failed file upload, LLM call failures) are handled gracefully.
+- [x] The entire flow is manually tested from dashboard to download.
+- [x] End-to-end tests (using available testing frameworks) cover the complete journey.
+- [x] All error states (e.g., failed file upload, LLM call failures) are handled gracefully.
 - [ ] Documentation is updated with the final user journey and troubleshooting tips.
 
 ---
