@@ -6,6 +6,7 @@
  */
 
 import { CvData } from '../cv-parser/cv-parser';
+import { optimizeCvForJob } from '../api/anthropic';
 
 export interface RewriteRequest {
   cv: CvData;
@@ -24,18 +25,141 @@ export interface RewriteResponse {
 }
 
 /**
- * Simplified mock implementation of CV rewriting
- * In a production environment, this would connect to an actual LLM service
+ * Main function to rewrite a CV based on a job description
+ * Now supports LLM-powered optimization
  */
 export async function rewriteCV(
   cvData: CvData,
   jobDescription: string,
+  useLLM = true,
 ): Promise<RewriteResponse> {
-  // For development purposes, we're using a mock implementation
-  // In production, this would call a real LLM service API
-
   console.log('Rewriting CV for job description:', jobDescription);
 
+  try {
+    // Use LLM-powered optimization if enabled
+    if (useLLM && process.env.ANTHROPIC_API_KEY) {
+      console.log('Using LLM for CV optimization');
+      return await rewriteCVWithLLM(cvData, jobDescription);
+    } else {
+      // Fall back to the rule-based approach
+      console.log('Using rule-based CV optimization');
+      return await rewriteCVWithRules(cvData, jobDescription);
+    }
+  } catch (error) {
+    console.error('Error in CV rewriting:', error);
+    // Fall back to rule-based approach if LLM fails
+    return await rewriteCVWithRules(cvData, jobDescription);
+  }
+}
+
+/**
+ * LLM-powered CV rewriting using Anthropic API
+ */
+async function rewriteCVWithLLM(
+  cvData: CvData,
+  jobDescription: string,
+): Promise<RewriteResponse> {
+  // Log the original CV data for debugging
+  console.log('Original CV summary:', cvData.summary);
+
+  // Get recommendations from the LLM
+  const recommendations = await optimizeCvForJob(cvData, jobDescription);
+
+  // Log the recommendations for debugging
+  console.log(
+    'Received recommendations for summary:',
+    recommendations.summaryImprovement ? 'Yes' : 'No',
+  );
+
+  // Create a deep copy of the original CV to modify
+  const rewrittenCv: CvData = JSON.parse(JSON.stringify(cvData));
+
+  // Apply summary improvements if available
+  if (recommendations.summaryImprovement) {
+    rewrittenCv.summary = recommendations.summaryImprovement;
+    console.log(
+      'Applied new summary:',
+      rewrittenCv.summary.substring(0, 50) + '...',
+    );
+  } else {
+    console.log('No summary improvements received, keeping original summary');
+  }
+
+  // Apply work experience improvements
+  if (recommendations.workExperienceRecommendations) {
+    // For each work experience that has recommendations
+    recommendations.workExperienceRecommendations.forEach((rec) => {
+      // Find matching work experience entry
+      const matchingExp = rewrittenCv.workExperience.find(
+        (exp) => exp.company === rec.company && exp.position === rec.position,
+      );
+
+      // Apply improvements to responsibilities if the entry was found
+      if (matchingExp && rec.improvements.length > 0) {
+        // Add new responsibilities while preserving existing ones
+        const existingResponsibilities = new Set(
+          matchingExp.responsibilities || [],
+        );
+        rec.improvements.forEach((improvement) => {
+          if (!existingResponsibilities.has(improvement)) {
+            if (!matchingExp.responsibilities) {
+              matchingExp.responsibilities = [];
+            }
+            matchingExp.responsibilities.push(improvement);
+          }
+        });
+      }
+    });
+  }
+
+  // Apply skills recommendations
+  if (recommendations.skillsRecommendations) {
+    // Add new skills
+    recommendations.skillsRecommendations.add.forEach((skillName) => {
+      const exists = rewrittenCv.skills.some(
+        (s) => s.name.toLowerCase() === skillName.toLowerCase(),
+      );
+
+      if (!exists) {
+        rewrittenCv.skills.push({ name: skillName });
+      }
+    });
+
+    // Emphasize existing skills by adding levels
+    recommendations.skillsRecommendations.emphasize.forEach((skillName) => {
+      const skill = rewrittenCv.skills.find(
+        (s) => s.name.toLowerCase() === skillName.toLowerCase(),
+      );
+
+      if (skill && !skill.level) {
+        skill.level = 'Advanced';
+      }
+    });
+  }
+
+  // Return the rewrite response
+  return {
+    originalCv: cvData,
+    rewrittenCv,
+    jobDescription,
+    matches: {
+      skills: recommendations.skillsRecommendations.emphasize || [],
+      experience:
+        recommendations.workExperienceRecommendations.map((r) => r.company) ||
+        [],
+    },
+    improvements: recommendations.overallSuggestions || [],
+  };
+}
+
+/**
+ * Original rule-based CV rewriting
+ * Kept for backward compatibility and as a fallback
+ */
+async function rewriteCVWithRules(
+  cvData: CvData,
+  jobDescription: string,
+): Promise<RewriteResponse> {
   // Create a deep copy of the original CV to modify
   const rewrittenCv: CvData = JSON.parse(JSON.stringify(cvData));
 
@@ -143,16 +267,19 @@ function findMatches(
 
   // Find matching experience
   cv.workExperience.forEach((job) => {
-    job.responsibilities.forEach((resp) => {
-      if (keywords.some((keyword) => resp.toLowerCase().includes(keyword))) {
-        const matchedKeyword = keywords.find((keyword) =>
-          resp.toLowerCase().includes(keyword),
-        );
-        if (matchedKeyword && !experience.includes(matchedKeyword)) {
-          experience.push(matchedKeyword);
+    if (job.responsibilities) {
+      // Check if responsibilities exist
+      job.responsibilities.forEach((resp) => {
+        if (keywords.some((keyword) => resp.toLowerCase().includes(keyword))) {
+          const matchedKeyword = keywords.find((keyword) =>
+            resp.toLowerCase().includes(keyword),
+          );
+          if (matchedKeyword && !experience.includes(matchedKeyword)) {
+            experience.push(matchedKeyword);
+          }
         }
-      }
-    });
+      });
+    }
   });
 
   return { skills, experience };
@@ -219,23 +346,26 @@ function extractJobTitle(jobDescription: string): string | null {
  */
 function enhanceWorkExperience(cv: CvData, keywords: string[]): void {
   cv.workExperience.forEach((job) => {
-    job.responsibilities = job.responsibilities.map((responsibility) => {
-      // Look for keywords in the responsibility
-      const matchedKeyword = keywords.find((keyword) =>
-        responsibility.toLowerCase().includes(keyword),
-      );
-
-      if (matchedKeyword) {
-        // Emphasize the matched keyword
-        const pattern = new RegExp(matchedKeyword, 'i');
-        return responsibility.replace(
-          pattern,
-          (match) => `${match} (key skill for this role)`,
+    if (job.responsibilities) {
+      // Check if responsibilities exist
+      job.responsibilities = job.responsibilities.map((responsibility) => {
+        // Look for keywords in the responsibility
+        const matchedKeyword = keywords.find((keyword) =>
+          responsibility.toLowerCase().includes(keyword),
         );
-      }
 
-      return responsibility;
-    });
+        if (matchedKeyword) {
+          // Emphasize the matched keyword
+          const pattern = new RegExp(matchedKeyword, 'i');
+          return responsibility.replace(
+            pattern,
+            (match) => `${match} (key skill for this role)`,
+          );
+        }
+
+        return responsibility;
+      });
+    }
   });
 }
 
@@ -292,11 +422,13 @@ function generateImprovements(
 
   // Check for quantifiable achievements
   const hasQuantifiableAchievements = cv.workExperience.some((job) =>
-    job.responsibilities.some((resp) =>
-      /\d+%|\d+ percent|increased|decreased|improved|reduced|generated|saved|managed \d+/i.test(
-        resp,
-      ),
-    ),
+    job.responsibilities
+      ? job.responsibilities.some((resp) =>
+          /\d+%|\d+ percent|increased|decreased|improved|reduced|generated|saved|managed \d+/i.test(
+            resp,
+          ),
+        )
+      : false,
   );
 
   if (!hasQuantifiableAchievements) {

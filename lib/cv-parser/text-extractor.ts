@@ -7,10 +7,102 @@
 
 import { readFile } from 'fs/promises';
 import { join } from 'path';
+import mammoth from 'mammoth';
+import { parsePdf } from './pdf-wrapper';
 
-// Mock implementation for text extraction
-// In a real-world application, you would use libraries like pdf-parse and mammoth
-// but since we're facing dependency issues, we'll simulate the extraction
+/**
+ * Advanced text normalization and cleanup
+ * @param text Raw extracted text
+ */
+function normalizeText(text: string): string {
+  return (
+    text
+      // Replace multiple newlines with a single one
+      .replace(/\n{3,}/g, '\n\n')
+      // Replace multiple spaces with a single one
+      .replace(/[ \t]+/g, ' ')
+      // Fix common OCR/extraction issues
+      .replace(/[""]/g, '"')
+      .replace(/['']/g, "'")
+      // Add space after bullet points if missing
+      .replace(/•(?=[a-zA-Z])/g, '• ')
+      .replace(/-(?=[a-zA-Z])/g, '- ')
+      // Add space after typical section headers if missing
+      .replace(
+        /(Education|Experience|Skills|Summary|Certification|Projects|Languages|References):(?=[a-zA-Z])/gi,
+        '$1: ',
+      )
+      // Trim each line
+      .split('\n')
+      .map((line) => line.trim())
+      .join('\n')
+  );
+}
+
+/**
+ * Improved extraction of content structure from raw text
+ * @param text Raw extracted text
+ */
+function enhanceExtractedText(text: string): string {
+  // Add section markers if they don't exist but the content suggests sections
+  let enhanced = text;
+
+  // Look for potential education section
+  if (
+    !text.match(/education:/i) &&
+    text.match(/bachelor|master|degree|university|college|diploma/i)
+  ) {
+    const educationIndicators = [
+      'Bachelor',
+      'Master',
+      'PhD',
+      'University',
+      'College',
+      'Degree',
+      'B.S.',
+      'M.S.',
+      'B.A.',
+      'M.A.',
+      'GPA',
+      'Graduated',
+    ];
+
+    for (const indicator of educationIndicators) {
+      const regex = new RegExp(`(\\n|^)([^\\n]*${indicator}[^\\n]*)`, 'i');
+      const match = enhanced.match(regex);
+      if (match) {
+        enhanced = enhanced.replace(match[0], `\n\nEducation:\n${match[2]}`);
+        break;
+      }
+    }
+  }
+
+  // Look for potential experience section
+  if (
+    !text.match(/experience:|work experience:/i) &&
+    text.match(/worked at|position|role at|job title|company|employer/i)
+  ) {
+    enhanced = enhanced.replace(
+      /(\n|^)([^\n]*(worked at|position:|job title:|company:|employer:)[^\n]*)/i,
+      '\n\nWork Experience:\n$2',
+    );
+  }
+
+  // Look for potential skills section
+  if (
+    !text.match(/skills:|technical skills:/i) &&
+    text.match(
+      /proficient in|familiar with|knowledge of|expertise in|technologies/i,
+    )
+  ) {
+    enhanced = enhanced.replace(
+      /(\n|^)([^\n]*(proficient in|familiar with|knowledge of|expertise in|technologies:)[^\n]*)/i,
+      '\n\nSkills:\n$2',
+    );
+  }
+
+  return enhanced;
+}
 
 /**
  * Extracts text content from a PDF file
@@ -20,36 +112,70 @@ import { join } from 'path';
  */
 export async function extractTextFromPDF(filePath: string): Promise<string> {
   try {
-    // Simulated extraction - in real implementation, we'd use pdf-parse
-    // This is a placeholder that returns mock data for demonstration
-    return `SIMULATED PDF EXTRACTION
-    
-Resume of John Doe
+    console.log(`Reading PDF file from: ${filePath}`);
 
-Contact Information:
-Email: john.doe@example.com
-Phone: (555) 123-4567
-LinkedIn: linkedin.com/in/johndoe
+    // Read the file content
+    const fileBuffer = await readFile(filePath);
 
-Summary:
-Experienced software developer with 5 years of experience in web application development.
-Proficient in JavaScript, TypeScript, React, and Node.js.
+    try {
+      // Use our PDF parser wrapper to extract text from the PDF
+      const data = await parsePdf(fileBuffer, {
+        version: '1.10.100', // Use a fixed version to prevent further issues
+      });
 
-Work Experience:
-Senior Developer, ABC Company (2020-Present)
-- Led development of company's flagship product
-- Managed team of 5 developers
-- Implemented CI/CD pipeline
+      // Verify we got actual content
+      if (data && data.text && data.text.length > 0) {
+        console.log(
+          `Successfully extracted ${data.text.length} characters from PDF`,
+        );
 
-Developer, XYZ Corp (2018-2020)
-- Developed front-end components using React
-- Collaborated with design team on UI/UX improvements
+        // Clean and enhance the extracted text
+        const normalizedText = normalizeText(data.text);
+        const enhancedText = enhanceExtractedText(normalizedText);
 
-Education:
-Bachelor of Science in Computer Science, University State (2018)`;
+        return enhancedText;
+      } else {
+        throw new Error('Extracted PDF text is empty');
+      }
+    } catch (parseError) {
+      console.error('PDF parsing error:', parseError);
+
+      // Fallback 1: Try simpler PDF parsing approach
+      console.log('Attempting simple PDF text extraction as fallback...');
+
+      // Extract visible text using a simpler approach
+      // Convert Buffer to string and search for text patterns
+      const bufferString = fileBuffer.toString(
+        'utf-8',
+        0,
+        Math.min(fileBuffer.length, 1000000),
+      );
+
+      // Get text content between parentheses (often how text is stored in PDFs)
+      const textMatches = bufferString.match(/\(([^)]+)\)/g) || [];
+      const extractedText = textMatches
+        .map((match) => match.substring(1, match.length - 1))
+        .filter((text) => /[a-zA-Z]{2,}/.test(text)) // Only keep strings with actual words
+        .join(' ');
+
+      if (extractedText && extractedText.length > 100) {
+        console.log(
+          `Extracted ${extractedText.length} characters using fallback method`,
+        );
+
+        // Clean and enhance the extracted text
+        const normalizedText = normalizeText(extractedText);
+        const enhancedText = enhanceExtractedText(normalizedText);
+
+        return enhancedText;
+      }
+
+      // If both methods fail, return a helpful message but include any content we found
+      return `PDF text extraction was difficult for this document. Limited text extracted:\n\n${extractedText || 'No clear text found'}.\n\nPlease try uploading a Word document (.docx) for better results.`;
+    }
   } catch (error) {
-    console.error('Error extracting text from PDF:', error);
-    throw new Error('Failed to extract text from PDF file');
+    console.error('Error reading PDF file:', error);
+    return 'Could not open PDF file. Please check if the file is corrupted or try a different format.';
   }
 }
 
@@ -61,36 +187,93 @@ Bachelor of Science in Computer Science, University State (2018)`;
  */
 export async function extractTextFromWord(filePath: string): Promise<string> {
   try {
-    // Simulated extraction - in real implementation, we'd use mammoth
-    // This is a placeholder that returns mock data for demonstration
-    return `SIMULATED WORD DOCUMENT EXTRACTION
-    
-Resume of Jane Smith
+    console.log(`Reading Word document from: ${filePath}`);
 
-Contact Information:
-Email: jane.smith@example.com
-Phone: (555) 987-6543
-LinkedIn: linkedin.com/in/janesmith
+    // Read the file content
+    const fileBuffer = await readFile(filePath);
 
-Summary:
-Full-stack developer with 3 years of experience building modern web applications.
-Skilled in React, Node.js, and cloud infrastructure.
+    // Extract with both methods for best results
+    const [rawTextResult, htmlResult] = await Promise.all([
+      // Extract raw text
+      mammoth.extractRawText({
+        buffer: fileBuffer,
+      }),
 
-Work Experience:
-Full Stack Developer, Tech Innovations Inc (2019-Present)
-- Developed and maintained multiple client applications
-- Implemented serverless architecture on AWS
-- Optimized application performance by 40%
+      // Extract HTML (has more structure information)
+      mammoth.convertToHtml({
+        buffer: fileBuffer,
+      }),
+    ]);
 
-Junior Developer, StartUp Co (2018-2019)
-- Built responsive user interfaces
-- Worked with REST APIs and database integration
+    // Get the raw text and HTML content
+    const rawText = rawTextResult.value;
+    const html = htmlResult.value;
 
-Education:
-Bachelor of Computer Science, Tech University (2018)`;
+    console.log(
+      `Successfully extracted ${rawText.length} characters from Word document`,
+    );
+
+    // Use HTML structure to enhance the raw text extraction
+    let enhancedText = rawText;
+
+    // Extract section headers from HTML
+    const headingMatches = html.match(/<h[1-3][^>]*>([^<]+)<\/h[1-3]>/g) || [];
+    const headings = headingMatches.map((h) =>
+      h
+        .replace(/<\/?[^>]+(>|$)/g, '') // Strip HTML tags
+        .trim(),
+    );
+
+    // Add section markers based on headings found in HTML
+    headings.forEach((heading) => {
+      // Only add section marker if the heading looks like a section
+      if (
+        /Education|Experience|Skills|Summary|Profile|Certification|Projects|Languages|References/i.test(
+          heading,
+        )
+      ) {
+        // Make sure this is a section header format if it's not already
+        const headingWithColon = heading.includes(':')
+          ? heading
+          : `${heading}:`;
+
+        // Find the heading in the raw text and replace it with a better formatted version
+        const escapedHeading = heading.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const regex = new RegExp(
+          `(^|\\n)\\s*${escapedHeading}\\s*(:|\\n|$)`,
+          'i',
+        );
+
+        if (regex.test(enhancedText)) {
+          enhancedText = enhancedText.replace(
+            regex,
+            `\n\n${headingWithColon}\n`,
+          );
+        } else {
+          // If the exact heading isn't found, look for content that might be this section
+          // This helps with inconsistent parsing between HTML and raw text
+          const approxRegex = new RegExp(
+            `(^|\\n)\\s*(\\w*${heading.substring(0, 5)}\\w*)\\s*(:|\\n|$)`,
+            'i',
+          );
+          if (approxRegex.test(enhancedText)) {
+            enhancedText = enhancedText.replace(
+              approxRegex,
+              `\n\n${headingWithColon}\n`,
+            );
+          }
+        }
+      }
+    });
+
+    // Clean up and structurally enhance the text
+    const normalizedText = normalizeText(enhancedText);
+    const finalText = enhanceExtractedText(normalizedText);
+
+    return finalText;
   } catch (error) {
     console.error('Error extracting text from Word document:', error);
-    throw new Error('Failed to extract text from Word document');
+    return 'Word document text extraction failed. The file may be corrupted or password-protected.';
   }
 }
 
@@ -106,6 +289,8 @@ export async function extractTextFromCV(
   fileType: string,
 ): Promise<string> {
   try {
+    console.log(`Extracting text from file: ${filePath}, type: ${fileType}`);
+
     switch (fileType) {
       case 'application/pdf':
         return await extractTextFromPDF(filePath);
@@ -119,10 +304,12 @@ export async function extractTextFromCV(
         return await extractTextFromWord(filePath);
 
       default:
-        throw new Error(`Unsupported file type: ${fileType}`);
+        return `Unsupported file type: ${fileType}. Please upload a PDF or Word document.`;
     }
   } catch (error) {
     console.error('Error in text extraction:', error);
-    throw error;
+
+    // Provide a generic fallback extraction result rather than failing completely
+    return `Could not extract text from the uploaded file. The file may be corrupted, password-protected, or in an unsupported format. Please try a different file.`;
   }
 }

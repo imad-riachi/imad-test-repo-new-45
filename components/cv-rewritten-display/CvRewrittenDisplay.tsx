@@ -7,11 +7,10 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '../ui/card';
+} from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { CvData } from '@/lib/cv-parser/cv-parser';
-import { RewriteResponse } from '@/lib/cv-rewriter/rewriter';
-import { Badge } from '../ui/badge';
 import { CheckCircle2, Info } from 'lucide-react';
 
 export interface CvRewrittenDisplayProps {
@@ -23,6 +22,8 @@ export interface CvRewrittenDisplayProps {
   matchingSkills?: string[];
   /** Suggested improvements for the CV */
   improvements?: string[];
+  /** The job description used for optimization */
+  jobDescription?: string;
   /** Optional classname for styling */
   className?: string;
 }
@@ -35,6 +36,7 @@ const CvRewrittenDisplay: React.FC<CvRewrittenDisplayProps> = ({
   rewrittenCv,
   matchingSkills = [],
   improvements = [],
+  jobDescription = '',
   className,
 }) => {
   return (
@@ -279,14 +281,16 @@ const CvRewrittenDisplay: React.FC<CvRewrittenDisplayProps> = ({
       </div>
 
       {/* Job Description */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Job Description</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className='text-sm whitespace-pre-line'>{jobDescription}</p>
-        </CardContent>
-      </Card>
+      {jobDescription && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Job Description</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className='text-sm whitespace-pre-line'>{jobDescription}</p>
+          </CardContent>
+        </Card>
+      )}
     </Card>
   );
 };

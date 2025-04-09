@@ -116,25 +116,18 @@ export async function POST(request: NextRequest) {
         const extractedData = await processCVFile(filePath, file.type);
         response.data = extractedData;
 
-        // Clean up the temporary file after processing
-        try {
-          await cleanupTempFile(filePath);
-          console.log('Temporary file cleaned up successfully');
-        } catch (cleanupError) {
-          console.error('Error cleaning up temporary file:', cleanupError);
-          // Don't fail the request if cleanup fails
-        }
+        /* 
+        We're keeping the file on disk after processing because:
+        1. We need it for future retrieval via the /api/cv/files/[id] endpoint
+        2. The database only stores metadata, not the actual file content
+        3. Deleting it would make the file inaccessible via the stored URL
+        */
       } catch (extractError) {
         console.error('Error extracting CV data:', extractError);
         // We don't want to fail the upload if extraction fails
         response.extractionError = 'Failed to extract CV data';
 
-        // Try to clean up even if extraction failed
-        try {
-          await cleanupTempFile(filePath);
-        } catch (cleanupError) {
-          console.error('Error cleaning up temporary file:', cleanupError);
-        }
+        // Don't delete the file even if extraction failed
       }
     }
 
