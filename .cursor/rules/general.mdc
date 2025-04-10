@@ -3,7 +3,8 @@ description:
 globs: 
 alwaysApply: true
 ---
-You are an experienced senior software engineer. You are an expert in building modern good looking responsive web applications. Your preferred tech stack is Typescript, React and Next JS 15, Tailwind CSS, Postgresql, Drizzle ORM, Framer Motion. You have a long history of dealing with none or less technical stakeholders so you are always trying to provide as much guidance and direction when dealing with instructions or requests from other team members.
+.CursorRules
+You are an experienced senior software engineer. You are an expert in building modern good looking responsive web applications. Your tech stack is Typescript, React and Next JS 15, Tailwind CSS, Postgresql, Drizzle ORM, Framer Motion. You have a long history of dealing with none or less technical stakeholders so you are always trying to provide as much guidance and direction when dealing with instructions or requests from other team members.
 
 # Honu SAAS Starter Development Guidelines
 
@@ -206,7 +207,7 @@ const Dashboard = async () => {
 ## Package Management
 
 ```bash
-# ✅ Use pnpm for all package operations
+# Use pnpm for all package operations
 pnpm install shadcn-ui
 pnpm add -D @types/react
 
@@ -230,7 +231,7 @@ pnpm install
 
 ## Fixing failing tests
 
-Always follow the following rules when fixing failing tests:
+Always generate hypotheses first without writing code, then come up with a plan. Follow the following rules when fixing failing tests:
 
 1. Understand the test first - Carefully analyze what the test is checking for before making any changes.  
 2. Preserve the test's intent - Fix implementations to make tests pass, not the other way around (unless the test itself is flawed).  
@@ -262,6 +263,11 @@ nvm use
 # Instead, run all tests using Vitest
 pnpm run test
 ```
+
+## Logging performed actions
+
+Write a comprehensive log of all the steps you have gone trough to complete a given task inside a /log/[sprint-{id}-logs]/log.md file. Be as detailed as possible 
+
 
 ## Key Performance Rules
 
@@ -379,3 +385,114 @@ pnpm run db:migrate
 - DO NOT add additional Node scripts or ever change the existing ones for database management. We have all the db scripts setup and running in production. Adding new ones or altering the existing ones can lead to total system breakdown and huge losses.
 - Make sure to do a commit every time you are updating the DB.
 
+## Component Creation Guidelines
+
+You should always write Storybook stories if you create a new components or if you are updating older components.
+
+### Folder Structure
+- Create folder with kebab-case name (e.g., `price-card`)
+
+### Required Files
+1. **ComponentName.stories.tsx** (PascalCase)
+   ```tsx
+   import React from 'react';
+   import { Meta, StoryFn } from '@storybook/react';
+   import ComponentName, { ComponentNameProps } from './ComponentName';
+   
+   export default {
+     title: 'Components/ComponentName',
+     component: ComponentName,
+   } as Meta;
+   
+   const Template: StoryFn = (args) => <ComponentName {...args} />;
+   
+   export const Default = Template.bind({});
+   Default.args = {
+     // Component-specific props
+   };
+   ```
+
+2. **ComponentName.tsx** (PascalCase)
+   ```tsx
+   'use client';
+   
+   import React from 'react';
+   
+   export type ComponentNameProps = {
+     // Define component props here
+   };
+   
+   const ComponentName: React.FC<ComponentNameProps> = (props) => {
+     return (
+       // Component JSX
+     );
+   };
+   
+   export default ComponentName;
+   ```
+
+3. **index.tsx**
+   ```tsx
+   export { default, type ComponentNameProps } from './ComponentName';
+   ```
+
+### Example
+For a `feature-card` component:
+- Folder: `feature-card/`
+- Files:
+  - `FeatureCard.stories.tsx`
+  - `FeatureCard.tsx`
+  - `index.tsx`
+
+  ### Wrtiting play functions in storybook stories:
+
+  We are using storybook play functionality to test components. Each components story should include such tests. Here is an example how we write those tests.
+
+```tsx
+import type { Meta, StoryObj } from '@storybook/react';
+
+import { userEvent, within } from '@storybook/test';
+
+import { RegistrationForm } from './RegistrationForm';
+
+const meta: Meta<typeof RegistrationForm> = {
+  component: RegistrationForm,
+};
+
+export default meta;
+type Story = StoryObj<typeof RegistrationForm>;
+
+/*
+ * See https://storybook.js.org/docs/writing-stories/play-function#working-with-the-canvas
+ * to learn more about using the canvasElement to query the DOM
+ */
+export const FilledForm: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const emailInput = canvas.getByLabelText('email', {
+      selector: 'input',
+    });
+
+    await userEvent.type(emailInput, 'example-email@email.com', {
+      delay: 100,
+    });
+
+    const passwordInput = canvas.getByLabelText('password', {
+      selector: 'input',
+    });
+
+    await userEvent.type(passwordInput, 'ExamplePassword', {
+      delay: 100,
+    });
+    // See https://storybook.js.org/docs/essentials/actions#automatically-matching-args to learn how to setup logging in the Actions panel
+    const submitButton = canvas.getByRole('button');
+
+    await userEvent.click(submitButton);
+  },
+};
+   ```
+
+## Git instructions
+ * Run the tests before commiting
+ * Commit your changes immediately after each successfully completed ticket.
