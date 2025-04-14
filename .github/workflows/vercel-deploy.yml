@@ -23,7 +23,11 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '20'  # specify your Node version here
-          cache: 'npm'        # enables caching for faster builds
+          cache: 'pnpm'        # enables caching for faster builds
+
+      # Install pnpm
+      - name: Install pnpm
+        run: npm install -g pnpm
 
       # Install dependencies
       - name: Install dependencies
