@@ -41,6 +41,10 @@ jobs:
         run: pnpm run db:migrate
         env:
          POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
+         STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+         STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
+         AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
+         BASE_URL: ${{ secrets.BASE_URL }}
 
       # Ensure necessary environment variables are available for build if needed
       - name: Build project
