@@ -5,8 +5,7 @@ import ThemeToggle from '@/components/theme-toggle';
 import { Button } from '@/components/ui/button';
 import { Menu, X } from 'lucide-react';
 import Link from 'next/link';
-
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 export type NavbarProps = {
   links: { name: string; path: string }[];
@@ -17,6 +16,7 @@ const Navbar: React.FC<NavbarProps> = ({ links, children }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
 
   const isDashboard = pathname?.startsWith('/dashboard') ?? false;
 
@@ -53,13 +53,19 @@ const Navbar: React.FC<NavbarProps> = ({ links, children }) => {
           <ul className='flex space-x-1'>
             {links.map((item) => (
               <li key={item.name}>
-                <Link
-                  href={item.path}
-                  className='text-foreground/80 hover:text-foreground hover:bg-muted rounded-md px-4 py-2 transition duration-200'
-                  passHref
-                >
-                  {item.name}
-                </Link>
+                {pathname === item.path ? (
+                  <span className='text-primary after:bg-primary relative rounded-md px-4 py-2 text-sm font-medium transition duration-200 after:absolute after:bottom-0 after:left-1/2 after:h-0.5 after:w-[calc(100%-1rem)] after:-translate-x-1/2'>
+                    {item.name}
+                  </span>
+                ) : (
+                  <Link
+                    href={item.path}
+                    className='text-foreground/80 hover:text-foreground after:bg-primary relative rounded-md px-4 py-2 text-sm font-medium transition duration-200 after:absolute after:bottom-0 after:left-1/2 after:h-0.5 after:w-0 after:-translate-x-1/2 after:transition-all after:duration-300 hover:after:w-[calc(100%-1rem)]'
+                    passHref
+                  >
+                    {item.name}
+                  </Link>
+                )}
               </li>
             ))}
           </ul>
@@ -98,12 +104,21 @@ const Navbar: React.FC<NavbarProps> = ({ links, children }) => {
           <ul className='space-y-4'>
             {links.map((item) => (
               <li key={item.name}>
-                <button
-                  className='text-foreground hover:bg-muted block rounded-md px-4 py-3 text-lg font-medium transition duration-200'
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  {item.name}
-                </button>
+                {pathname === item.path ? (
+                  <span className='text-primary after:bg-primary relative block w-full rounded-md px-4 py-3 text-lg font-medium transition duration-200 after:absolute after:bottom-0 after:left-1/2 after:h-0.5 after:w-[calc(100%-2rem)] after:-translate-x-1/2'>
+                    {item.name}
+                  </span>
+                ) : (
+                  <button
+                    className='text-foreground after:bg-primary relative block w-full rounded-md px-4 py-3 text-lg font-medium transition duration-200 after:absolute after:bottom-0 after:left-1/2 after:h-0.5 after:w-0 after:-translate-x-1/2 after:transition-all after:duration-300 hover:after:w-[calc(100%-2rem)] active:scale-95'
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      router.push(item.path);
+                    }}
+                  >
+                    {item.name}
+                  </button>
+                )}
               </li>
             ))}
           </ul>

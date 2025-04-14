@@ -32,12 +32,20 @@ function Header() {
           {user ? (
             <UserAvatarMenu user={user} handleSignOut={handleSignOut} />
           ) : (
-            <Button
-              asChild
-              className='rounded-full bg-black px-4 py-2 text-sm text-white hover:bg-gray-800'
-            >
-              <Link href='/sign-up'>Sign Up</Link>
-            </Button>
+            <div className='flex items-center space-x-3'>
+              <Button
+                asChild
+                className='rounded-full border border-black bg-transparent px-5 py-2 text-sm font-medium text-black hover:bg-gray-100 dark:border-white dark:text-white dark:hover:bg-gray-800'
+              >
+                <Link href='/sign-in'>Log In</Link>
+              </Button>
+              <Button
+                asChild
+                className='rounded-full bg-black px-5 py-2 text-sm font-medium text-white hover:bg-gray-800'
+              >
+                <Link href='/sign-up'>Sign Up</Link>
+              </Button>
+            </div>
           )}
         </Navbar>
       </div>
