@@ -56,5 +56,6 @@ jobs:
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-          # VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }} # Removed scope as it's not needed for Hobby plan
-        run: npx vercel --prod --token $VERCEL_TOKEN
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+        # Instead of relying on pnpm script, call vercel directly with flags
+        run: npx vercel --prod --token $VERCEL_TOKEN --scope $VERCEL_ORG_ID
