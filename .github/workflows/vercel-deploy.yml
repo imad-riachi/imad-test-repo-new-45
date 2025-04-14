@@ -1,0 +1,49 @@
+name: Deploy to Production (Vercel)
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to deploy'
+        required: true
+        default: 'main'  # You can set your default branch here
+        type: string
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Setup Node.js environment
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'  # specify your Node version here
+          cache: 'npm'        # enables caching for faster builds
+
+      # Install dependencies
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Run database management scripts (e.g. migrations with drizzle)
+      # Adjust the command below to match your setup (e.g., npm run migrate)
+      - name: Run database migrations
+        run: pnpm run db:migrate
+
+      # Build the Next.js project
+      - name: Build project
+        run: pnpm run build
+
+      # Deploy the project using Vercel CLI
+      - name: Deploy to Vercel
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          # Include these only if you need to specify your Vercel organization and project IDs
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: |
+          pnpm run deploy
