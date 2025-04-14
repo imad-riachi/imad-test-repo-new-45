@@ -52,7 +52,7 @@ jobs:
 
       # Build the project using Vercel CLI
       - name: Build project
-        run: npx vercel build --token $VERCEL_TOKEN
+        run: npx vercel build --prod --token $VERCEL_TOKEN
         env:
          # Ensure all build-time secrets are here
          POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
