@@ -42,20 +42,26 @@ jobs:
         env:
          POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
 
-      # Ensure necessary environment variables are available for build if needed
+      # Build the project using Vercel CLI
       - name: Build project
-        run: pnpm run build
+        run: npx vercel build --token $VERCEL_TOKEN
         env:
+         # Ensure all build-time secrets are here
          POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
          STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
          AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
          BASE_URL: ${{ secrets.BASE_URL }}
+         # Vercel needs its own token during build too
+         VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+         VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+         VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
 
+      # Deploy the prebuilt output
       - name: Deploy to Vercel
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-        # Instead of relying on pnpm script, call vercel directly with flags
-        run: npx vercel --prod --token $VERCEL_TOKEN --scope $VERCEL_ORG_ID
+        # Deploy the output from the .vercel/output directory
+        run: npx vercel deploy --prebuilt --prod --token $VERCEL_TOKEN --scope $VERCEL_ORG_ID
