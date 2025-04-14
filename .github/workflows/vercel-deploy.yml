@@ -40,7 +40,7 @@ jobs:
       - name: Run database migrations
         run: pnpm run db:migrate
         env:
-         DATABASE_URL: ${{ secrets.POSTGRES_URL }}
+         POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
 
       # Ensure necessary environment variables are available for build if needed
       - name: Build project
