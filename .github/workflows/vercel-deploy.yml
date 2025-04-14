@@ -45,8 +45,8 @@ jobs:
       # Ensure necessary environment variables are available for build if needed
       - name: Build project
         run: pnpm run build
-        # env:
-        #   NEXT_PUBLIC_SOME_VAR: ${{ secrets.NEXT_PUBLIC_SOME_VAR }}
+        env:
+         POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
 
       - name: Deploy to Vercel
         env:
