@@ -42,6 +42,14 @@ jobs:
         env:
          POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
 
+      # Link project with Vercel CLI to download settings
+      - name: Link Vercel Project
+        run: npx vercel pull --yes --environment=production --token $VERCEL_TOKEN
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
       # Build the project using Vercel CLI
       - name: Build project
         run: npx vercel build --token $VERCEL_TOKEN
@@ -52,7 +60,7 @@ jobs:
          STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
          AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
          BASE_URL: ${{ secrets.BASE_URL }}
-         # Vercel needs its own token during build too
+         # Vercel secrets needed for build command context
          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
