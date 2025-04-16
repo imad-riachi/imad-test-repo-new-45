@@ -23,20 +23,21 @@ export async function createCheckoutSession({
   if (!team || !user) {
     redirect(`/sign-up?redirect=checkout&priceId=${priceId}`);
   }
+  if (team.stripeCustomerId) {
+    const subscriptions = await stripe.subscriptions.list({
+      customer: team.stripeCustomerId || undefined,
+      status: 'all',
+      limit: 1, // We only need to check if at least one active subscription exists
+    });
 
-  const subscriptions = await stripe.subscriptions.list({
-    customer: team.stripeCustomerId || undefined,
-    status: 'all',
-    limit: 1, // We only need to check if at least one active subscription exists
-  });
+    const relevantSubscription = subscriptions.data.find((sub) =>
+      ['active', 'trialing'].includes(sub.status),
+    );
 
-  const relevantSubscription = subscriptions.data.find((sub) =>
-    ['active', 'trialing'].includes(sub.status),
-  );
-
-  if (relevantSubscription) {
-    const portalSession = await createCustomerPortalSession(team);
-    redirect(portalSession.url);
+    if (relevantSubscription) {
+      const portalSession = await createCustomerPortalSession(team);
+      redirect(portalSession.url);
+    }
   }
 
   const session = await stripe.checkout.sessions.create({

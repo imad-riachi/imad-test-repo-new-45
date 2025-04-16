@@ -6,6 +6,8 @@ import { getUser } from '@/lib/db/queries';
 import Script from 'next/script';
 
 import ThemeProvider from '@/components/theme-provider';
+import PostHogProvider from '@/components/posthog-provider';
+import { getBootstrapData } from '@/lib/posthog';
 
 import content from '../content.json';
 
@@ -20,13 +22,14 @@ export const viewport: Viewport = {
 
 const manrope = Manrope({ subsets: ['latin'] });
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   const userPromise = getUser();
   const gtmId = process.env.GTM_ID; // Access the GTM ID from the environment
+  const bootstrap = await getBootstrapData();
 
   return (
     <html lang='en' className={`${manrope.className}`} suppressHydrationWarning>
@@ -52,7 +55,9 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <UserProvider userPromise={userPromise}>{children}</UserProvider>
+          <PostHogProvider bootstrap={bootstrap}>
+            <UserProvider userPromise={userPromise}>{children}</UserProvider>
+          </PostHogProvider>
         </ThemeProvider>
       </body>
     </html>

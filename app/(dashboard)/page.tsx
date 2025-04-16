@@ -5,7 +5,7 @@ import HeroSection from '@/components/hero-section';
 import FeatureCard from '@/components/feature-card';
 import content from '../../content.json';
 
-export default function HomePage() {
+export default async function HomePage() {
   return (
     <main>
       <section>

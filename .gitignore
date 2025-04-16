@@ -42,3 +42,5 @@ postgres_data/
 .env.vercel
 
 *storybook.log
+
+.env.local
