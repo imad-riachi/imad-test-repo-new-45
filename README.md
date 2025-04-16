@@ -56,6 +56,69 @@ This is a starter template for building a SaaS application using **Next.js** wit
 - **ORM**: [Drizzle](https://orm.drizzle.team/)
 - **Payments**: [Stripe](https://stripe.com/)
 - **UI Library**: [shadcn/ui](https://ui.shadcn.com/)
+- **Analytics**: [PostHog](https://posthog.com/)
+
+## PostHog Integration
+
+This project uses [PostHog](https://posthog.com/) for product analytics, feature flags, and user tracking.
+
+### Why PostHog?
+
+- **Product Analytics** - Track user behavior and understand how people use your SaaS application
+- **Feature Flags** - Safely roll out new features, perform A/B tests, and manage feature access
+- **Session Recording** - Watch real user sessions to understand usability issues
+- **User Identification** - Track users across their journey from anonymous visitors to paying customers
+- **Self-hosted Option** - PostHog can be self-hosted for complete data ownership
+- **Open Source** - PostHog offers an open-source core with transparent development
+
+### Integration Details
+
+PostHog is integrated in several key areas of the codebase:
+
+1. **Client-side Tracking** (`components/posthog-provider/PostHogProvider.tsx`)
+
+   - Automatically captures pageviews and page leave events
+   - Provider component wraps the application for global PostHog access
+
+2. **Server-side API** (`lib/posthog/index.ts`)
+
+   - Server-side PostHog client for capturing events from API routes
+   - Provides feature flag access on the server
+
+3. **Feature Flags Bootstrap** (`app/layout.tsx`)
+
+   - Initializes feature flags during application bootstrap
+   - Ensures consistent feature flag state between server and client
+
+4. **API Forwarding** (`next.config.ts`)
+   - Configures API endpoint rewrites for PostHog tracking
+   - Maintains proper handling of PostHog's API requirements
+
+### Setup
+
+To use PostHog in this project:
+
+1. Create a PostHog account at [posthog.com](https://posthog.com/)
+2. Create a new project in your PostHog dashboard
+3. Add your PostHog API keys to your `.env` file:
+   ```
+   NEXT_PUBLIC_POSTHOG_KEY=your_project_api_key
+   NEXT_PUBLIC_POSTHOG_HOST=https://us.i.posthog.com  # or your self-hosted URL
+   ```
+
+### Best Practices
+
+When using feature flags:
+
+- Limit the use of a single flag to as few locations as possible
+- Use descriptive naming for flags
+- Verify flag values before applying conditional logic
+
+When tracking events:
+
+- Maintain consistent naming conventions for events and properties
+- Use enums or constant objects for event names used in multiple places
+- Consider privacy implications and avoid tracking sensitive information
 
 ## Storybook
 
@@ -214,6 +277,11 @@ BASE_URL=http://localhost:3000
 # Authentication Secret
 # Generate a random string using: openssl rand -base64 32
 AUTH_SECRET=your_generated_auth_secret
+
+# PostHog Configuration
+# Get these from your PostHog Project Settings
+NEXT_PUBLIC_POSTHOG_KEY=phc_your_project_api_key
+NEXT_PUBLIC_POSTHOG_HOST=https://us.i.posthog.com
 ```
 
 ### Detailed Setup Instructions
@@ -244,12 +312,24 @@ AUTH_SECRET=your_generated_auth_secret
    - For production: Your actual domain (e.g., `https://your-app.com`)
 
 4. **Auth Secret (AUTH_SECRET)**:
+
    - Generate a secure random string using:
      ```bash
      openssl rand -base64 32
      ```
    - Copy the generated string
    - Keep this secret secure and never commit it to version control
+
+5. **PostHog Configuration**:
+   - Sign up for a PostHog account at https://posthog.com
+   - Create a new project in your PostHog dashboard
+   - Go to "Project Settings" → "Project API Key"
+   - Copy your "Project API Key" (starts with `phc_`)
+   - Add to your `.env` file:
+     ```
+     NEXT_PUBLIC_POSTHOG_KEY=your_project_api_key
+     NEXT_PUBLIC_POSTHOG_HOST=https://us.i.posthog.com  # or your self-hosted URL
+     ```
 
 ### Important Notes
 
@@ -533,6 +613,8 @@ POSTGRES_URL=your_production_database_url
 STRIPE_SECRET_KEY=sk_live_your_stripe_production_key
 STRIPE_WEBHOOK_SECRET=whsec_your_production_webhook_secret
 AUTH_SECRET=your_generated_auth_secret
+NEXT_PUBLIC_POSTHOG_KEY=phc_your_production_project_api_key
+NEXT_PUBLIC_POSTHOG_HOST=https://us.i.posthog.com
 ```
 
 Key variables to configure:
@@ -542,6 +624,8 @@ Key variables to configure:
 - `STRIPE_SECRET_KEY`: Your Stripe live mode secret key (starts with `sk_live_`)
 - `STRIPE_WEBHOOK_SECRET`: The webhook secret from the production webhook you set up
 - `AUTH_SECRET`: A secure random string (generate with `openssl rand -base64 32`)
+- `NEXT_PUBLIC_POSTHOG_KEY`: Your PostHog project API key for production analytics
+- `NEXT_PUBLIC_POSTHOG_HOST`: The PostHog host URL (or your self-hosted instance)
 
 #### 3. Deploy your environment variables
 
