@@ -23,6 +23,7 @@
     "coverage": "vitest run --coverage"
   },
   "dependencies": {
+    "@formbricks/js": "^4.1.0",
     "@next/mdx": "^15.2.1",
     "@radix-ui/react-avatar": "^1.1.2",
     "@radix-ui/react-dropdown-menu": "^2.1.5",

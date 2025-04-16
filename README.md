@@ -57,6 +57,7 @@ This is a starter template for building a SaaS application using **Next.js** wit
 - **Payments**: [Stripe](https://stripe.com/)
 - **UI Library**: [shadcn/ui](https://ui.shadcn.com/)
 - **Analytics**: [PostHog](https://posthog.com/)
+- **Surveys & Feedback**: [Formbrick](https://formbricks.com/)
 
 ## PostHog Integration
 
@@ -119,6 +120,140 @@ When tracking events:
 - Maintain consistent naming conventions for events and properties
 - Use enums or constant objects for event names used in multiple places
 - Consider privacy implications and avoid tracking sensitive information
+
+## Formbrick Integration
+
+This project uses [Formbrick](https://formbricks.com/) for in-app surveys, user feedback collection, and micro-surveys.
+
+### Why Formbrick?
+
+- **In-App Surveys** - Collect valuable user feedback directly within your application
+- **Micro-Surveys** - Create targeted short surveys to gain specific insights
+- **Customer Feedback Loop** - Understand user sentiment and identify areas for improvement
+- **Contextual Data Collection** - Gather feedback at specific points in the user journey
+- **Open Source** - Formbrick offers an open-source solution that can be self-hosted
+- **Privacy-Focused** - Designed with privacy in mind, giving you control over your data
+
+### Integration Details
+
+Formbrick is integrated in the codebase as follows:
+
+1. **Client-side Provider** (`components/formbricks-provider/index.tsx`)
+
+   - Sets up the Formbrick client with your environment configuration
+   - Tracks page navigation automatically with `registerRouteChange()`
+   - Runs in a React Suspense boundary for optimal performance
+
+2. **Root Layout Integration** (`app/layout.tsx`)
+
+   - The Formbrick provider is commented out by default
+   - Can be easily enabled by uncommenting the provider component
+
+### Setup
+
+To use Formbrick in this project:
+
+1. Create a Formbrick account at [formbricks.com](https://formbricks.com/)
+2. Create a new project in your Formbrick dashboard
+3. Add your Formbrick configuration to your `.env` file:
+   ```
+   NEXT_PUBLIC_FORMBRICKS_ENVIRONMENT_ID=your_environment_id
+   NEXT_PUBLIC_FORMBRICKS_APP_URL=https://app.formbricks.com
+   ```
+4. Uncomment the Formbrick provider in `app/layout.tsx`:
+   ```tsx
+   {
+     /* Uncomment to enable Formbricks integration */
+   }
+   <Suspense>
+     <FormbricksProvider />
+   </Suspense>;
+   ```
+
+### Usage Best Practices
+
+When creating surveys:
+
+- Keep surveys short and focused
+- Target specific user segments
+- Use surveys at appropriate points in the user journey
+- Test surveys before deploying them to all users
+- Regularly review and act on the feedback collected
+
+### Embedding Surveys in Your Application
+
+Formbricks provides multiple ways to display surveys to your users. Here's how to implement them in your Next.js SaaS Starter:
+
+#### 1. Automatic Triggers
+
+Once you've enabled the Formbricks provider in `app/layout.tsx`, you can create surveys in the Formbricks dashboard that trigger automatically based on:
+
+- **Page Navigation**: Surveys can appear when users navigate to specific pages
+- **Exit Intent**: Capture feedback when users are about to leave your site
+- **Scroll Depth**: Trigger surveys when users scroll to a certain point on the page
+
+#### 2. Custom Code Triggers
+
+For more targeted surveys, you can implement custom triggers in your components:
+
+```tsx
+'use client';
+
+import { Button } from '@/components/ui/button';
+import formbricks from '@formbricks/js';
+
+export default function FeedbackButton() {
+  const handleFeedbackClick = () => {
+    // Track a custom event that can trigger a survey
+    formbricks.track('requested_feedback');
+  };
+
+  return <Button onClick={handleFeedbackClick}>Give Feedback</Button>;
+}
+```
+
+In your Formbricks dashboard, create a survey that triggers on the `requested_feedback` action.
+
+#### 3. User Identification
+
+To associate survey responses with specific users, add user identification after authentication:
+
+```tsx
+'use client';
+
+import { useEffect } from 'react';
+import formbricks from '@formbricks/js';
+
+export function UserIdentifier({ user }) {
+  useEffect(() => {
+    if (user?.id) {
+      formbricks.setUserId(user.id);
+
+      // Optionally set user attributes for targeting
+      formbricks.setAttributes({
+        email: user.email,
+        plan: user.subscription?.plan || 'free',
+        createdAt: user.createdAt,
+      });
+    }
+  }, [user]);
+
+  return null;
+}
+```
+
+Add this component to your authenticated layout or within components that have access to the user context.
+
+#### 4. Debugging Survey Display
+
+If your surveys aren't appearing as expected:
+
+1. Add `?formbricksDebug=true` to your URL while testing
+2. Open your browser's developer console to see debug information
+3. Verify that your triggers are being tracked correctly
+4. Check that your targeting conditions in the Formbricks dashboard are set correctly
+
+By using these techniques, you can collect valuable user feedback at critical points in your application's user journey, helping you improve your product based on real user insights.
 
 ## Storybook
 
@@ -282,6 +417,10 @@ AUTH_SECRET=your_generated_auth_secret
 # Get these from your PostHog Project Settings
 NEXT_PUBLIC_POSTHOG_KEY=phc_your_project_api_key
 NEXT_PUBLIC_POSTHOG_HOST=https://us.i.posthog.com
+
+# Formbrick Configuration
+NEXT_PUBLIC_FORMBRICKS_ENVIRONMENT_ID=your_environment_id
+NEXT_PUBLIC_FORMBRICKS_APP_URL=https://app.formbricks.com
 ```
 
 ### Detailed Setup Instructions
@@ -321,6 +460,7 @@ NEXT_PUBLIC_POSTHOG_HOST=https://us.i.posthog.com
    - Keep this secret secure and never commit it to version control
 
 5. **PostHog Configuration**:
+
    - Sign up for a PostHog account at https://posthog.com
    - Create a new project in your PostHog dashboard
    - Go to "Project Settings" → "Project API Key"
@@ -329,6 +469,17 @@ NEXT_PUBLIC_POSTHOG_HOST=https://us.i.posthog.com
      ```
      NEXT_PUBLIC_POSTHOG_KEY=your_project_api_key
      NEXT_PUBLIC_POSTHOG_HOST=https://us.i.posthog.com  # or your self-hosted URL
+     ```
+
+6. **Formbrick Configuration**:
+   - Sign up for a Formbrick account at https://formbricks.com
+   - Create a new project in your Formbrick dashboard
+   - Go to "Settings" → "Developer" to find your environment ID
+   - Copy your "Environment ID"
+   - Add to your `.env` file:
+     ```
+     NEXT_PUBLIC_FORMBRICKS_ENVIRONMENT_ID=your_environment_id
+     NEXT_PUBLIC_FORMBRICKS_APP_URL=https://app.formbricks.com  # or your self-hosted URL
      ```
 
 ### Important Notes
@@ -615,6 +766,8 @@ STRIPE_WEBHOOK_SECRET=whsec_your_production_webhook_secret
 AUTH_SECRET=your_generated_auth_secret
 NEXT_PUBLIC_POSTHOG_KEY=phc_your_production_project_api_key
 NEXT_PUBLIC_POSTHOG_HOST=https://us.i.posthog.com
+NEXT_PUBLIC_FORMBRICKS_ENVIRONMENT_ID=your_production_environment_id
+NEXT_PUBLIC_FORMBRICKS_APP_URL=https://app.formbricks.com
 ```
 
 Key variables to configure:
@@ -626,6 +779,8 @@ Key variables to configure:
 - `AUTH_SECRET`: A secure random string (generate with `openssl rand -base64 32`)
 - `NEXT_PUBLIC_POSTHOG_KEY`: Your PostHog project API key for production analytics
 - `NEXT_PUBLIC_POSTHOG_HOST`: The PostHog host URL (or your self-hosted instance)
+- `NEXT_PUBLIC_FORMBRICKS_ENVIRONMENT_ID`: Your Formbrick production environment ID
+- `NEXT_PUBLIC_FORMBRICKS_APP_URL`: The Formbrick host URL (or your self-hosted instance)
 
 #### 3. Deploy your environment variables
 

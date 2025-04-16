@@ -8,6 +8,9 @@ import Script from 'next/script';
 import ThemeProvider from '@/components/theme-provider';
 import PostHogProvider from '@/components/posthog-provider';
 import { getBootstrapData } from '@/lib/posthog';
+import { Suspense } from 'react';
+// Uncomment to enable Formbricks integration
+// import FormbricksProvider from '@/components/formbricks-provider';
 
 import content from '../content.json';
 
@@ -56,7 +59,13 @@ export default async function RootLayout({
           disableTransitionOnChange
         >
           <PostHogProvider bootstrap={bootstrap}>
-            <UserProvider userPromise={userPromise}>{children}</UserProvider>
+            <UserProvider userPromise={userPromise}>
+              {/* Uncomment to enable Formbricks integration */}
+              {/* <Suspense>
+                <FormbricksProvider />
+              </Suspense> */}
+              {children}
+            </UserProvider>
           </PostHogProvider>
         </ThemeProvider>
       </body>
