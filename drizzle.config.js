@@ -12,14 +12,14 @@ module.exports = {
     // Fallback options (commented out, uncomment if needed):
     /*
     // Option 1: Direct connection with explicit password
-    host: "db.yxapldwjtokgnromhexy.supabase.co",
+    host: "db.gufxzviwmnemfhhmrzfi.supabase.co",
     port: 5432,
     database: "postgres", 
     user: "postgres",
     password: process.env.POSTGRES_PASSWORD,
     
     // Option 2: Connection pooler with project reference
-    // connectionString: "postgresql://postgres.yxapldwjtokgnromhexy:postgres@aws-0-us-west-1.pooler.supabase.com:5432/postgres?options=project%3Dyxapldwjtokgnromhexy",
+    // connectionString: "postgresql://postgres.gufxzviwmnemfhhmrzfi:postgres@aws-0-us-west-1.pooler.supabase.com:5432/postgres?options=project%3Dgufxzviwmnemfhhmrzfi",
     */
   },
 };
